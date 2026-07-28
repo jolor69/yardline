@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Yardline — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+
+<!-- Login gate -->
+<section class="login-gate" id="login-gate">
+  <div class="login-card">
+    <h1>Yardline Admin</h1>
+    <p class="sub">Sign in with an admin account.</p>
+    <form id="login-form">
+      <div class="field">
+        <label for="login-email">Email</label>
+        <input class="input" id="login-email" name="email" type="email" autocomplete="username" required />
+      </div>
+      <div class="field">
+        <label for="login-password">Password</label>
+        <input class="input" id="login-password" name="password" type="password" autocomplete="current-password" required />
+      </div>
+      <p class="error-text" id="login-error"></p>
+      <button class="btn btn--accent btn--full" type="submit">Sign in</button>
+    </form>
+  </div>
+</section>
+
+<!-- Dashboard shell -->
+<div class="shell" id="shell">
+  <header class="topbar">
+    <div class="topbar__brand">Yardline Admin</div>
+    <div style="display:flex; align-items:center; gap: var(--space-md);">
+      <span class="topbar__who" id="who"></span>
+      <button class="btn btn--outline btn--sm" id="logout-btn" type="button">Log out</button>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" data-tab="accounts" aria-selected="true">Accounts</button>
+    <button class="tab" role="tab" data-tab="matches" aria-selected="false">Matches</button>
+    <button class="tab" role="tab" data-tab="listings" aria-selected="false">Listings</button>
+    <button class="tab" role="tab" data-tab="settings" aria-selected="false">Settings</button>
+  </nav>
+
+  <main>
+    <!-- Accounts -->
+    <section class="panel is-active" id="panel-accounts">
+      <div class="panel__head">
+        <div>
+          <h2>Accounts</h2>
+          <p>Verify accounts, grant self-listing, and set per-seller photo limits.</p>
+        </div>
+        <div class="field-row" style="margin:0;">
+          <select class="input" id="accounts-role-filter" style="height:36px;">
+            <option value="">All roles</option>
+            <option value="buyer">Buyers</option>
+            <option value="seller">Sellers</option>
+            <option value="admin">Admins</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Company</th><th>Role</th><th>Email</th><th>Verification</th>
+              <th>Self-list</th><th>Photo limit</th>
+            </tr>
+          </thead>
+          <tbody id="accounts-body"></tbody>
+        </table>
+      </div>
+      <p class="empty-state" id="accounts-empty" hidden>No accounts yet.</p>
+    </section>
+
+    <!-- Matches -->
+    <section class="panel" id="panel-matches">
+      <div class="panel__head">
+        <div>
+          <h2>Pending matches</h2>
+          <p>A match is invisible to both parties until approved here.</p>
+        </div>
+      </div>
+      <div id="pending-matches" style="display:flex; flex-direction:column; gap: var(--space-sm);"></div>
+      <p class="empty-state" id="pending-empty" hidden>Nothing waiting on review.</p>
+
+      <div class="panel__head" style="margin-top: var(--space-lg);">
+        <div>
+          <h2>Approved history</h2>
+        </div>
+      </div>
+      <div id="approved-matches" style="display:flex; flex-direction:column; gap: var(--space-sm);"></div>
+      <p class="empty-state" id="approved-empty" hidden>Nothing approved yet.</p>
+    </section>
+
+    <!-- Listings -->
+    <section class="panel" id="panel-listings">
+      <div class="panel__head">
+        <div>
+          <h2>List on behalf of a seller</h2>
+          <p>Free text goes through the same extraction pipeline sellers use.</p>
+        </div>
+      </div>
+      <form id="new-listing-form">
+        <div class="field">
+          <label for="listing-seller">Seller</label>
+          <select class="input" id="listing-seller" required></select>
+        </div>
+        <div class="field">
+          <label for="listing-desc">Description</label>
+          <textarea id="listing-desc" placeholder="2019 Komatsu PC200 excavator, 4000 hours, good condition, 800 million rupiah, Jakarta." required></textarea>
+        </div>
+        <p class="error-text" id="listing-error"></p>
+        <button class="btn btn--accent" type="submit">Extract listing</button>
+      </form>
+
+      <div id="draft-review" hidden>
+        <h3 style="font-size: var(--text-md); margin-bottom: var(--space-sm);">Review before confirming</h3>
+        <div class="field-row">
+          <div class="field"><label>Category</label>
+            <select class="input" id="draft-category">
+              <option value="excavator">Excavator</option>
+              <option value="wheel_loader">Wheel loader</option>
+              <option value="crane">Crane</option>
+              <option value="dozer">Dozer</option>
+              <option value="compactor">Compactor</option>
+              <option value="attachment">Attachment</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="field"><label>Brand</label><input class="input" id="draft-brand" /></div>
+          <div class="field"><label>Model</label><input class="input" id="draft-model" /></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Year</label><input class="input" id="draft-year" type="number" /></div>
+          <div class="field"><label>Hours / mileage</label><input class="input" id="draft-hours" type="number" /></div>
+          <div class="field"><label>Condition</label>
+            <select class="input" id="draft-condition">
+              <option value="">—</option>
+              <option value="new">New</option>
+              <option value="used_good">Used, good</option>
+              <option value="used_fair">Used, fair</option>
+              <option value="for_parts">For parts</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Price</label><input class="input" id="draft-price" type="number" /></div>
+          <div class="field"><label>Currency</label><input class="input" id="draft-currency" /></div>
+          <div class="field"><label>City</label><input class="input" id="draft-city" /></div>
+          <div class="field"><label>Region</label><input class="input" id="draft-region" /></div>
+        </div>
+        <button class="btn btn--accent" id="confirm-listing-btn" type="button">Confirm listing</button>
+      </div>
+
+      <div class="panel__head" style="margin-top: var(--space-lg);">
+        <div><h2>All listings</h2></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ID</th><th>Category</th><th>Brand / model</th><th>Price</th><th>Seller</th><th>Status</th></tr></thead>
+          <tbody id="listings-body"></tbody>
+        </table>
+      </div>
+      <p class="empty-state" id="listings-empty" hidden>No listings yet.</p>
+    </section>
+
+    <!-- Settings -->
+    <section class="panel" id="panel-settings">
+      <div class="panel__head">
+        <div>
+          <h2>Settings</h2>
+          <p>Global default photo limit. Override per seller from the Accounts tab.</p>
+        </div>
+      </div>
+      <form id="settings-form" style="max-width: 20rem;">
+        <div class="field">
+          <label for="default-max-photos">Default max photos per listing</label>
+          <input class="input" id="default-max-photos" type="number" min="1" required />
+        </div>
+        <button class="btn btn--accent" type="submit">Save</button>
+      </form>
+    </section>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  const $ = (sel, root) => (root || document).querySelector(sel);
+  const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
+
+  async function api(path, opts) {
+    const res = await fetch("/api" + path, Object.assign({ credentials: "include" }, opts, {
+      headers: Object.assign({ "Content-Type": "application/json" }, (opts && opts.headers) || {}),
+    }));
+    const text = await res.text();
+    const data = text ? JSON.parse(text) : null;
+    if (!res.ok) {
+      const err = new Error((data && data.error) || "Request failed");
+      err.status = res.status;
+      throw err;
+    }
+    return data;
+  }
+
+  function toast(message, isError) {
+    const el = $("#toast");
+    el.textContent = message;
+    el.className = "toast is-visible" + (isError ? " toast--error" : "");
+    setTimeout(() => { el.classList.remove("is-visible"); }, 2600);
+  }
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+
+  // ---- Auth / boot ----
+
+  async function boot() {
+    try {
+      const me = await api("/auth/me");
+      if (me.role !== "admin") {
+        await api("/auth/logout", { method: "POST" });
+        showLogin("That account isn't an admin.");
+        return;
+      }
+      showDashboard(me);
+    } catch {
+      showLogin("");
+    }
+  }
+
+  function showLogin(message) {
+    $("#login-gate").classList.remove("is-hidden");
+    $("#shell").classList.remove("is-visible");
+    $("#login-error").textContent = message || "";
+  }
+
+  function showDashboard(me) {
+    $("#login-gate").classList.add("is-hidden");
+    $("#shell").classList.add("is-visible");
+    $("#who").textContent = me.company_name + " · " + me.email;
+    loadAccounts();
+    loadPendingMatches();
+    loadApprovedMatches();
+    loadSellersIntoSelect();
+    loadListings();
+    loadSettings();
+  }
+
+  $("#login-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    $("#login-error").textContent = "";
+    const email = $("#login-email").value;
+    const password = $("#login-password").value;
+    try {
+      const account = await api("/auth/login", { method: "POST", body: JSON.stringify({ email, password }) });
+      if (account.role !== "admin") {
+        await api("/auth/logout", { method: "POST" });
+        $("#login-error").textContent = "That account isn't an admin.";
+        return;
+      }
+      showDashboard(account);
+    } catch (err) {
+      $("#login-error").textContent = err.message;
+    }
+  });
+
+  $("#logout-btn").addEventListener("click", async () => {
+    await api("/auth/logout", { method: "POST" });
+    showLogin("");
+  });
+
+  // ---- Tabs ----
+
+  $$(".tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      $$(".tab").forEach((t) => t.setAttribute("aria-selected", "false"));
+      tab.setAttribute("aria-selected", "true");
+      $$(".panel").forEach((p) => p.classList.remove("is-active"));
+      $("#panel-" + tab.dataset.tab).classList.add("is-active");
+    });
+  });
+
+  // ---- Accounts ----
+
+  async function loadAccounts() {
+    const role = $("#accounts-role-filter").value;
+    const accounts = await api("/admin/accounts" + (role ? "?role=" + role : ""));
+    const body = $("#accounts-body");
+    body.innerHTML = "";
+    $("#accounts-empty").hidden = accounts.length > 0;
+    accounts.forEach((a) => {
+      const tr = document.createElement("tr");
+      const verifyBadgeClass = a.verification_status === "verified" ? "badge--verified" : "badge--pending";
+      tr.innerHTML = `
+        <td>${esc(a.company_name)}</td>
+        <td><span class="badge">${esc(a.role)}</span></td>
+        <td>${esc(a.email)}</td>
+        <td><button class="btn btn--outline btn--sm" data-action="verify" data-id="${a.id}" data-current="${a.verification_status}">
+              <span class="badge ${verifyBadgeClass}">${esc(a.verification_status)}</span>
+            </button></td>
+        <td>${a.role === "seller" ? `<label class="toggle"><input type="checkbox" data-action="self-list" data-id="${a.id}" ${a.can_self_list ? "checked" : ""}/> allowed</label>` : "—"}</td>
+        <td>${a.role === "seller" ? `<input class="input override-input" type="number" min="1" placeholder="default" value="${a.max_photos_override == null ? "" : a.max_photos_override}" data-action="photo-override" data-id="${a.id}" />` : "—"}</td>
+      `;
+      body.appendChild(tr);
+    });
+  }
+
+  $("#accounts-role-filter").addEventListener("change", loadAccounts);
+
+  $("#accounts-body").addEventListener("click", async (e) => {
+    const btn = e.target.closest("[data-action='verify']");
+    if (!btn) return;
+    const next = btn.dataset.current === "verified" ? "pending" : "verified";
+    try {
+      await api("/admin/accounts/" + btn.dataset.id, { method: "PATCH", body: JSON.stringify({ verification_status: next }) });
+      toast("Verification updated");
+      loadAccounts();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  });
+
+  $("#accounts-body").addEventListener("change", async (e) => {
+    const toggle = e.target.closest("[data-action='self-list']");
+    if (toggle) {
+      try {
+        await api("/admin/accounts/" + toggle.dataset.id, { method: "PATCH", body: JSON.stringify({ can_self_list: toggle.checked }) });
+        toast("Self-listing updated");
+      } catch (err) {
+        toast(err.message, true);
+        toggle.checked = !toggle.checked;
+      }
+      return;
+    }
+    const override = e.target.closest("[data-action='photo-override']");
+    if (override) {
+      const raw = override.value.trim();
+      const value = raw === "" ? null : Number(raw);
+      try {
+        await api("/admin/accounts/" + override.dataset.id, { method: "PATCH", body: JSON.stringify({ max_photos_override: value }) });
+        toast("Photo limit updated");
+      } catch (err) {
+        toast(err.message, true);
+      }
+    }
+  });
+
+  // ---- Matches ----
+
+  function matchCard(m, approved) {
+    const div = document.createElement("div");
+    div.className = "match-card";
+    const statusBadge = approved ? `approved ${esc(m.approval_status || 'both')}` : "pending";
+    const approvalButtons = !approved ? `
+      <div style="display: flex; gap: var(--space-2xs);">
+        <button class="btn btn--outline btn--sm" data-approve-status="buyer_only" data-approve="${m.match_id}" title="Buyer sees this, seller doesn't">Buyer only</button>
+        <button class="btn btn--outline btn--sm" data-approve-status="seller_only" data-approve="${m.match_id}" title="Seller sees this, buyer doesn't">Seller only</button>
+        <button class="btn btn--accent btn--sm" data-approve-status="both" data-approve="${m.match_id}" title="Both parties see this">Both</button>
+      </div>
+    ` : "";
+    div.innerHTML = `
+      <div class="match-card__meta">
+        <span class="match-card__parties">${esc(m.buyer_company)} &harr; ${esc(m.seller_company)}</span>
+        <span class="match-card__detail">${esc(m.listing_category)}${m.listing_brand ? " · " + esc(m.listing_brand) : ""}${m.listing_model ? " " + esc(m.listing_model) : ""} · ${statusBadge} ${esc(m.created_at)}</span>
+      </div>
+      <div style="display:flex; align-items:center; gap: var(--space-md);">
+        <span class="match-card__score">fit ${m.criteria_fit_score}</span>
+        ${approvalButtons}
+      </div>
+    `;
+    return div;
+  }
+
+  async function loadPendingMatches() {
+    const matches = await api("/admin/matches/pending");
+    const wrap = $("#pending-matches");
+    wrap.innerHTML = "";
+    $("#pending-empty").hidden = matches.length > 0;
+    matches.forEach((m) => wrap.appendChild(matchCard(m, false)));
+  }
+
+  async function loadApprovedMatches() {
+    const matches = await api("/admin/matches/approved");
+    const wrap = $("#approved-matches");
+    wrap.innerHTML = "";
+    $("#approved-empty").hidden = matches.length > 0;
+    matches.forEach((m) => wrap.appendChild(matchCard(m, true)));
+  }
+
+  $("#pending-matches").addEventListener("click", async (e) => {
+    const btn = e.target.closest("[data-approve]");
+    if (!btn) return;
+    btn.disabled = true;
+    try {
+      const approvalStatus = btn.dataset.approveStatus;
+      await api("/admin/matches/" + btn.dataset.approve + "/approve", {
+        method: "POST",
+        body: JSON.stringify({ approval_status: approvalStatus }),
+      });
+      toast("Match approved for " + approvalStatus.replace(/_/g, " "));
+      loadPendingMatches();
+      loadApprovedMatches();
+    } catch (err) {
+      toast(err.message, true);
+      btn.disabled = false;
+    }
+  });
+
+  // ---- Listings ----
+
+  async function loadSellersIntoSelect() {
+    const sellers = await api("/admin/accounts?role=seller");
+    const select = $("#listing-seller");
+    select.innerHTML = sellers.map((s) => `<option value="${s.id}">${esc(s.company_name)} (${esc(s.email)})</option>`).join("");
+  }
+
+  let draftListingId = null;
+
+  $("#new-listing-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    $("#listing-error").textContent = "";
+    const account_id = Number($("#listing-seller").value);
+    const raw_description = $("#listing-desc").value;
+    try {
+      const result = await api("/listings", { method: "POST", body: JSON.stringify({ account_id, raw_description }) });
+      const listing = result.listing;
+      draftListingId = listing.id;
+      $("#draft-category").value = listing.category || "other";
+      $("#draft-brand").value = listing.brand || "";
+      $("#draft-model").value = listing.model || "";
+      $("#draft-year").value = listing.year || "";
+      $("#draft-hours").value = listing.hours_or_mileage || "";
+      $("#draft-condition").value = listing.condition || "";
+      $("#draft-price").value = listing.price || "";
+      $("#draft-currency").value = listing.currency || "USD";
+      $("#draft-city").value = listing.city || "";
+      $("#draft-region").value = listing.region || "";
+      $("#draft-review").hidden = false;
+      if (result.needs_review) toast("Extraction needs review — check the fields before confirming", true);
+    } catch (err) {
+      $("#listing-error").textContent = err.message;
+    }
+  });
+
+  $("#confirm-listing-btn").addEventListener("click", async () => {
+    if (!draftListingId) return;
+    const numOrNull = (v) => (v === "" ? null : Number(v));
+    const payload = {
+      id: draftListingId,
+      category: $("#draft-category").value,
+      brand: $("#draft-brand").value || null,
+      model: $("#draft-model").value || null,
+      year: numOrNull($("#draft-year").value),
+      hours_or_mileage: numOrNull($("#draft-hours").value),
+      condition: $("#draft-condition").value || null,
+      price: numOrNull($("#draft-price").value),
+      currency: $("#draft-currency").value || "USD",
+      city: $("#draft-city").value || null,
+      region: $("#draft-region").value || null,
+    };
+    try {
+      await api("/listings/confirm", { method: "POST", body: JSON.stringify(payload) });
+      toast("Listing confirmed");
+      $("#draft-review").hidden = true;
+      $("#new-listing-form").reset();
+      draftListingId = null;
+      loadListings();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  });
+
+  async function loadListings() {
+    const listings = await api("/admin/listings");
+    const body = $("#listings-body");
+    body.innerHTML = "";
+    $("#listings-empty").hidden = listings.length > 0;
+    listings.forEach((l) => {
+      const tr = document.createElement("tr");
+      const statusClass = l.extraction_status === "needs_review" ? "badge--needs-review" : l.extraction_status === "ok" ? "badge--verified" : "badge--pending";
+      tr.innerHTML = `
+        <td>${l.id}</td>
+        <td>${esc(l.category)}</td>
+        <td>${esc(l.brand || "—")} ${esc(l.model || "")}</td>
+        <td>${l.price ? esc(l.currency) + " " + Number(l.price).toLocaleString() : "—"}</td>
+        <td>#${l.account_id}</td>
+        <td><span class="badge ${statusClass}">${esc(l.extraction_status)}</span></td>
+      `;
+      body.appendChild(tr);
+    });
+  }
+
+  // ---- Settings ----
+
+  async function loadSettings() {
+    const s = await api("/admin/settings/default-max-photos");
+    $("#default-max-photos").value = s.default_max_photos;
+  }
+
+  $("#settings-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const value = Number($("#default-max-photos").value);
+    try {
+      await api("/admin/settings/default-max-photos", { method: "PATCH", body: JSON.stringify({ default_max_photos: value }) });
+      toast("Settings saved");
+    } catch (err) {
+      toast(err.message, true);
+    }
+  });
+
+  boot();
+})();
+</script>
+
+</body>
+</html>

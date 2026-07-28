@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title data-i18n="meta.title">Reset your password — Yardline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="mast">
+  <a class="mast__brand" href="/">Yardline</a>
+  <div class="lang-toggle" role="group" aria-label="Language">
+    <button type="button" class="lang-btn" data-lang-btn="en" aria-pressed="true">EN</button>
+    <button type="button" class="lang-btn" data-lang-btn="id" aria-pressed="false">ID</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- Reset form -->
+  <section class="reset-card" id="state-form">
+    <h1 data-i18n="reset.title">Set a new password</h1>
+    <p class="sub" data-i18n="reset.subtitle">Choose a new password for your Yardline account.</p>
+    <form id="reset-form">
+      <div class="field">
+        <label for="new-password" data-i18n="reset.newLabel">New password</label>
+        <input class="input" id="new-password" type="password" autocomplete="new-password" minlength="8" required />
+        <p class="help" data-i18n="reset.hint">Must be at least 8 characters.</p>
+      </div>
+      <div class="field">
+        <label for="confirm-password" data-i18n="reset.confirmLabel">Confirm password</label>
+        <input class="input" id="confirm-password" type="password" autocomplete="new-password" minlength="8" required />
+      </div>
+      <p class="error-text" id="reset-error"></p>
+      <button class="btn btn--accent btn--full" type="submit" id="reset-submit" data-i18n="reset.submit">Reset password</button>
+    </form>
+  </section>
+
+  <!-- Success -->
+  <section class="reset-card is-hidden" id="state-success">
+    <h1 data-i18n="reset.success.title">Password updated</h1>
+    <p class="sub" data-i18n="reset.success.body">You can now log in with your new password.</p>
+    <a class="btn btn--accent btn--full" href="/login" data-i18n="reset.success.cta">Go to login</a>
+  </section>
+
+  <!-- Invalid / missing token -->
+  <section class="reset-card is-hidden" id="state-invalid">
+    <h1 data-i18n="reset.invalid.title">This link isn't valid</h1>
+    <p class="sub" id="invalid-message" data-i18n="reset.invalid.missing">This page needs a reset link — check your email or request a new one.</p>
+    <a class="btn btn--accent btn--full" href="/" data-i18n="reset.invalid.cta">Back to Yardline</a>
+  </section>
+
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  var $ = function (sel) { return document.querySelector(sel); };
+
+  async function api(path, opts) {
+    var res = await fetch("/api" + path, Object.assign({ credentials: "include" }, opts, {
+      headers: Object.assign({ "Content-Type": "application/json" }, (opts && opts.headers) || {}),
+    }));
+    var text = await res.text();
+    var data = text ? JSON.parse(text) : null;
+    if (!res.ok) {
+      var err = new Error((data && data.error) || "Request failed");
+      err.status = res.status;
+      throw err;
+    }
+    return data;
+  }
+
+  function showState(id) {
+    ["state-form", "state-success", "state-invalid"].forEach(function (s) {
+      $("#" + s).classList.toggle("is-hidden", s !== id);
+    });
+  }
+
+  /* -------------------------------------------------------------- */
+  /* Server error string → i18n mapping (the one dynamic string      */
+  /* that doesn't come from data-i18n, since it originates server-   */
+  /* side and is always English).                                    */
+  /* -------------------------------------------------------------- */
+
+  var serverErrorMap = {
+    "This reset link is invalid or has expired": "reset.error.expired",
+  };
+
+  var token = new URLSearchParams(location.search).get("token");
+
+  var resetForm = $("#reset-form");
+  var resetSubmit = $("#reset-submit");
+  var errorEl = $("#reset-error");
+
+  if (!token) {
+    showState("state-invalid");
+  } else {
+    showState("state-form");
+  }
+
+  resetForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    errorEl.textContent = "";
+
+    var password = $("#new-password").value;
+    var confirm = $("#confirm-password").value;
+
+    if (password.length < 8) {
+      errorEl.textContent = t("reset.validation.tooShort");
+      return;
+    }
+    if (password !== confirm) {
+      errorEl.textContent = t("reset.validation.mismatch");
+      return;
+    }
+
+    resetSubmit.disabled = true;
+    try {
+      await api("/auth/reset-password", { method: "POST", body: JSON.stringify({ token: token, password: password }) });
+      showState("state-success");
+    } catch (err) {
+      var key = err.message && serverErrorMap[err.message];
+      errorEl.textContent = key ? t(key) : (err.message || t("reset.error.network"));
+    } finally {
+      resetSubmit.disabled = false;
+    }
+  });
+
+  /* -------------------------------------------------------------- */
+  /* Language toggle — English / Indonesian                          */
+  /* -------------------------------------------------------------- */
+
+  var idText = {
+    "meta.title": "Atur ulang kata sandi — Yardline",
+    "reset.title": "Atur kata sandi baru",
+    "reset.subtitle": "Pilih kata sandi baru untuk akun Yardline Anda.",
+    "reset.newLabel": "Kata sandi baru",
+    "reset.confirmLabel": "Konfirmasi kata sandi",
+    "reset.hint": "Minimal 8 karakter.",
+    "reset.submit": "Atur ulang kata sandi",
+    "reset.success.title": "Kata sandi diperbarui",
+    "reset.success.body": "Anda sekarang bisa masuk dengan kata sandi baru Anda.",
+    "reset.success.cta": "Ke halaman masuk",
+    "reset.invalid.title": "Tautan ini tidak valid",
+    "reset.invalid.missing": "Halaman ini memerlukan tautan atur ulang — periksa email Anda atau minta tautan baru.",
+    "reset.invalid.cta": "Kembali ke Yardline",
+    "reset.validation.tooShort": "Kata sandi harus minimal 8 karakter.",
+    "reset.validation.mismatch": "Kata sandi tidak cocok.",
+    "reset.error.expired": "Tautan atur ulang ini tidak valid atau sudah kedaluwarsa.",
+    "reset.error.network": "Terjadi kesalahan. Periksa koneksi Anda dan coba lagi."
+  };
+
+  var extraEn = {
+    "reset.validation.tooShort": "Password must be at least 8 characters.",
+    "reset.validation.mismatch": "Passwords don't match.",
+    "reset.error.expired": "This reset link is invalid or has expired",
+    "reset.error.network": "Something went wrong. Check your connection and try again."
+  };
+
+  var i18nEls = document.querySelectorAll("[data-i18n]");
+  var enText = Object.assign({}, extraEn);
+  i18nEls.forEach(function (el) {
+    var key = el.dataset.i18n;
+    enText[key] = el.tagName === "TITLE" ? el.textContent : el.innerHTML;
+  });
+
+  var currentDict = enText;
+
+  function t(key) {
+    return currentDict[key] || enText[key] || key;
+  }
+
+  var langBtns = document.querySelectorAll("[data-lang-btn]");
+
+  function setLang(lang) {
+    currentDict = lang === "id" ? Object.assign({}, enText, idText) : enText;
+    i18nEls.forEach(function (el) {
+      var key = el.dataset.i18n;
+      var value = currentDict[key] || enText[key];
+      if (el.tagName === "TITLE") {
+        el.textContent = value;
+      } else {
+        el.innerHTML = value;
+      }
+    });
+    document.documentElement.lang = lang;
+    langBtns.forEach(function (b) {
+      b.setAttribute("aria-pressed", String(b.dataset.langBtn === lang));
+    });
+    try { localStorage.setItem("yardline-lang", lang); } catch (e) {}
+  }
+
+  langBtns.forEach(function (btn) {
+    btn.addEventListener("click", function () { setLang(btn.dataset.langBtn); });
+  });
+
+  var savedLang = null;
+  try { savedLang = localStorage.getItem("yardline-lang"); } catch (e) {}
+  if (savedLang === "id") { setLang("id"); }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,89 @@
+/* Hallmark · tokens · theme: Coral (modern-minimal) */
+
+:root {
+  /* ---- colour — Coral, dark variant: warm-charcoal paper + coral accent ---- */
+  --color-paper:      oklch(20%   0.014 50);
+  --color-paper-2:    oklch(23%   0.016 50);   /* elevated surface — lighter, not darker */
+  --color-paper-3:    oklch(27%   0.018 50);
+  --color-rule:       oklch(31%   0.014 50);
+  --color-rule-2:     oklch(37%   0.014 50);
+  --color-muted:      oklch(58%   0.012 50);
+  --color-neutral:    oklch(72%   0.010 45);
+  --color-ink-2:      oklch(88%   0.007 45);
+  --color-ink:        oklch(96%   0.005 50);
+  --color-accent:     oklch(70%   0.14  28);   /* warm coral — signal only */
+  --color-accent-ink: oklch(16%   0.02  30);
+  --color-focus:      oklch(70%   0.14  28);
+  --color-error:      oklch(64%   0.19  25);
+  --color-success:    oklch(66%   0.12  150);
+
+  /* ---- type ---- */
+  --font-display: "Geist", "General Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-body:    "Geist", "General Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    "Geist Mono", ui-monospace, monospace;
+  --font-wordmark: "Geist", ui-sans-serif, sans-serif;
+
+  --display-weight: 600;
+
+  --text-xs:   0.8rem;
+  --text-sm:   0.9rem;
+  --text-base: 1rem;
+  --text-md:   1.25rem;
+  --text-lg:   1.5625rem;
+  --text-xl:   1.9531rem;
+  --text-2xl:  2.4414rem;
+  --text-3xl:  3.0518rem;
+  --text-display:   clamp(2.5rem, 5.0vw + 0.5rem, 4.5rem);
+  --text-display-s: clamp(2rem, 3vw + 0.5rem, 3rem);
+
+  --lh-tight:  1.05;
+  --lh-snug:   1.2;
+  --lh-normal: 1.55;
+  --lh-relaxed: 1.65;
+
+  --tracking-display: -0.025em;
+  --tracking-tight:   -0.015em;
+  --tracking-label:   0.08em;
+
+  /* ---- space — 4pt scale ---- */
+  --space-3xs: 0.125rem;
+  --space-2xs: 0.25rem;
+  --space-xs:  0.5rem;
+  --space-sm:  0.75rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2.5rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+  --space-4xl: 9rem;
+
+  --section-gap: 6rem;
+  --section-head-gap: 1.5rem;
+
+  --page-max:    76rem;
+  --page-gutter: clamp(1.25rem, 4vw, 3rem);
+  --measure:     65ch;
+
+  /* ---- radius / shadow ---- */
+  --radius-card:  8px;
+  --radius-pill:  999px;
+  --radius-input: 6px;
+  --shadow-card:  0 1px 2px oklch(20% 0.01 50 / 0.06);
+  --shadow-lift:  0 8px 24px -12px oklch(20% 0.02 40 / 0.18);
+
+  /* ---- motion ---- */
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:     cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms;
+  --dur-short: 220ms;
+  --dur-long:  420ms;
+
+  /* ---- z-index scale ---- */
+  --z-base:     1;
+  --z-raised:   10;
+  --z-dropdown: 100;
+  --z-sticky:   200;
+  --z-modal:    400;
+  --z-toast:    500;
+}

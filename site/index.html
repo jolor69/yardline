@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title data-i18n="meta.title">Yardline — Matched, not just listed</title>
+<meta id="meta-desc" name="description" data-i18n="meta.desc" content="Yardline matches verified buyers and sellers of used industrial and construction machinery, then gets out of the way." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a class="nav__brand" href="#top">Yardline</a>
+    <nav class="nav__center" aria-label="Primary">
+      <a class="nav__link" href="#equipment" data-i18n="nav.equipment">Browse Equipment</a>
+      <a class="nav__link" href="#how-it-works" data-i18n="nav.how">How It Works</a>
+      <a class="nav__link" href="#pricing" data-i18n="nav.pricing">Pricing</a>
+    </nav>
+    <div class="nav__right">
+      <div class="lang-toggle" role="group" aria-label="Language">
+        <button type="button" class="lang-btn" data-lang-btn="en" aria-pressed="true">EN</button>
+        <button type="button" class="lang-btn" data-lang-btn="id" aria-pressed="false">ID</button>
+      </div>
+      <a class="btn btn--text nav__login" href="/login" data-i18n="nav.login">Log in</a>
+      <a class="btn btn--accent" href="/get-started" data-i18n="nav.start">Get started</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- Hero — H2 Split Diptych -->
+  <section class="hero container">
+    <div class="bg-decor" aria-hidden="true">
+      <img class="bg-decor__excavator" src="https://images.unsplash.com/photo-1630288214173-a119cf823388?fm=jpg&amp;q=60&amp;w=1200&amp;h=900&amp;fit=crop&amp;auto=format" width="1200" height="900" alt="" loading="eager" />
+      <img class="bg-decor__roller" src="https://images.unsplash.com/photo-1760708626681-59a5373819a6?fm=jpg&amp;q=60&amp;w=900&amp;h=700&amp;fit=crop&amp;auto=format" width="900" height="700" alt="" loading="eager" />
+    </div>
+    <div class="hero__grid">
+      <div class="reveal" style="--i:0">
+        <h1 class="hero__title" data-i18n="hero.title">Matched, not just listed.</h1>
+        <p class="hero__lede" data-i18n="hero.lede">Yardline matches verified buyers with verified sellers of used excavators, loaders, cranes, and attachments. Set your criteria once — we tell you when the other side matches it.</p>
+        <div class="hero__actions">
+          <a class="btn btn--accent" href="/get-started?role=buyer" data-i18n="hero.cta.buyer">Find equipment</a>
+          <a class="btn btn--outline" href="/get-started?role=seller" data-i18n="hero.cta.seller">List your equipment</a>
+        </div>
+        <p class="hero__trust" data-i18n="hero.trust">Buyer and seller accounts are verified before any match is sent.</p>
+      </div>
+      <div class="reveal" style="--i:1">
+        <div class="match-card" aria-hidden="true">
+          <p class="match-card__label" data-i18n="match.label">Match preview</p>
+          <div class="match-card__row">
+            <span class="match-card__dot match-card__dot--buyer">B</span>
+            <div class="match-card__info">
+              <span class="match-card__role" data-i18n="match.buyerRole">Buyer</span>
+              <span class="match-card__meta" data-i18n="match.buyerMeta">Wheel loader · within 150 mi</span>
+            </div>
+          </div>
+          <div class="match-card__connector"></div>
+          <div class="match-card__row">
+            <span class="match-card__dot match-card__dot--seller">S</span>
+            <div class="match-card__info">
+              <span class="match-card__role" data-i18n="match.sellerRole">Seller</span>
+              <span class="match-card__meta" data-i18n="match.sellerMeta">3 wheel loaders in inventory</span>
+            </div>
+          </div>
+          <div class="match-card__result"><span class="match-card__check">✓</span> <span data-i18n="match.result">Approved — contact released</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bento grid -->
+  <section class="section" id="how-it-works">
+    <div class="bg-decor" aria-hidden="true">
+      <img class="bg-decor__loader" src="https://images.unsplash.com/photo-1757496156065-669f39ae77eb?fm=jpg&amp;q=60&amp;w=900&amp;h=700&amp;fit=crop&amp;auto=format" width="900" height="700" alt="" loading="lazy" />
+      <img class="bg-decor__telehandler" src="https://images.unsplash.com/photo-1742070122889-1c7ab35ea456?fm=jpg&amp;q=60&amp;w=900&amp;h=700&amp;fit=crop&amp;auto=format" width="900" height="700" alt="" loading="lazy" />
+    </div>
+    <div class="container">
+      <div class="section-head reveal" style="--i:0">
+        <h2 data-i18n="sides.title">Two sides, one match</h2>
+        <p data-i18n="sides.desc">Yardline exists to connect the two sides of a heavy-equipment sale — not to be a listings board either one has to browse.</p>
+      </div>
+      <div class="bento">
+        <article class="cell span-2x1 reveal" style="--i:1">
+          <h3 data-i18n="tile.buyers.title">For buyers</h3>
+          <p data-i18n="tile.buyers.body">Tell us what you need — category, spec, budget, and location. We match you with sellers who have it; once we review and approve the match, you get their contact details.</p>
+          <a class="btn btn--text" href="/get-started?role=buyer" data-i18n="tile.buyers.cta">Find equipment →</a>
+        </article>
+        <article class="cell span-2x1 reveal" style="--i:2">
+          <h3 data-i18n="tile.sellers.title">For sellers</h3>
+          <p data-i18n="tile.sellers.body">List what you’re selling once. When a buyer’s criteria match your equipment, we review the match and introduce you — no public listing, no bidding thread.</p>
+          <a class="btn btn--text" href="/get-started?role=seller" data-i18n="tile.sellers.cta">List equipment →</a>
+        </article>
+        <article class="cell span-2x2 cell--steps reveal" style="--i:3">
+          <h3 data-i18n="tile.steps.title">How matching works</h3>
+          <div class="steps">
+            <div class="step"><p data-i18n="tile.steps.s1">Set your criteria — what you’re buying or selling, and where.</p></div>
+            <div class="step"><p data-i18n="tile.steps.s2">We check it against the other side’s active criteria every day.</p></div>
+            <div class="step"><p data-i18n="tile.steps.s3">When there’s a match, our team reviews it before you get the other party’s contact details.</p></div>
+          </div>
+        </article>
+        <article class="cell span-2x1 reveal" id="equipment" style="--i:1">
+          <h3 data-i18n="tile.equipment.title">Equipment we cover</h3>
+          <p data-i18n="tile.equipment.body">Illustrative categories — matching depends on what’s active in your region.</p>
+          <div class="chip-row">
+            <span class="chip" data-i18n="chip.excavators">Excavators</span>
+            <span class="chip" data-i18n="chip.loaders">Wheel loaders</span>
+            <span class="chip" data-i18n="chip.cranes">Cranes</span>
+            <span class="chip" data-i18n="chip.dozers">Dozers</span>
+            <span class="chip" data-i18n="chip.compactors">Compactors</span>
+            <span class="chip" data-i18n="chip.attachments">Attachments</span>
+          </div>
+        </article>
+        <article class="cell span-1x1 reveal" style="--i:2">
+          <h3 data-i18n="tile.verified.title">Verified both sides</h3>
+          <p data-i18n="tile.verified.body">Every account is checked before it can send or receive a match — business details confirmed, not just an email address.</p>
+        </article>
+        <article class="cell span-1x1 reveal" style="--i:3">
+          <h3 data-i18n="tile.commission.title">Subscription, plus commission</h3>
+          <p data-i18n="tile.commission.body">Your subscription covers access to matching. When a match leads to a completed sale, a commission on the sale price also applies, at a rate set by Yardline.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="section section--tint" id="pricing">
+    <div class="bg-decor" aria-hidden="true">
+      <img class="bg-decor__bulldozer" src="https://images.unsplash.com/photo-1691047489143-79b91c648c85?fm=jpg&amp;q=60&amp;w=900&amp;h=700&amp;fit=crop&amp;auto=format" width="900" height="700" alt="" loading="lazy" />
+    </div>
+    <div class="container">
+      <div class="section-head reveal" style="--i:0">
+        <h2 data-i18n="pricing.title">Pricing</h2>
+        <p data-i18n="pricing.desc">One subscription per side, plus a commission — set by Yardline — when a match closes into a sale.</p>
+      </div>
+      <div class="pricing-grid">
+        <div class="price-card reveal" style="--i:1">
+          <p class="price-card__plan" data-i18n="price.buyer.plan">Buyer</p>
+          <p class="price-card__price">$— <span data-i18n="price.unit">/ month</span></p>
+          <p class="price-card__note" data-i18n="price.note">Price to confirm</p>
+          <p class="price-card__note" data-i18n="price.buyer.commission">+ commission on the purchase price, rate set by Yardline</p>
+          <p class="price-card__desc" data-i18n="price.buyer.desc">For contractors and procurement teams sourcing specific equipment.</p>
+          <ul class="price-card__list">
+            <li data-i18n="price.buyer.li1">Unlimited match criteria</li>
+            <li data-i18n="price.buyer.li2">Notified the day a seller matches</li>
+            <li data-i18n="price.buyer.li3">Direct contact with matched sellers</li>
+            <li data-i18n="price.buyer.li4">Verified seller network only</li>
+            <li data-i18n="price.buyer.li5">Commission applies only when a match leads to a purchase</li>
+          </ul>
+          <a class="btn btn--outline" href="/get-started?role=buyer" data-i18n="price.buyer.cta">Start as a buyer</a>
+        </div>
+        <div class="price-card reveal" style="--i:2">
+          <p class="price-card__plan" data-i18n="price.seller.plan">Seller</p>
+          <p class="price-card__price">$— <span data-i18n="price.unit">/ month</span></p>
+          <p class="price-card__note" data-i18n="price.note">Price to confirm</p>
+          <p class="price-card__note" data-i18n="price.seller.commission">+ commission on the sale price, rate set by Yardline</p>
+          <p class="price-card__desc" data-i18n="price.seller.desc">For dealers and owners moving used equipment out of inventory.</p>
+          <ul class="price-card__list">
+            <li data-i18n="price.seller.li1">Unlimited equipment listed for matching</li>
+            <li data-i18n="price.seller.li2">Buyer leads delivered as they match</li>
+            <li data-i18n="price.seller.li3">Direct contact with matched buyers</li>
+            <li data-i18n="price.seller.li4">Verified buyer network only</li>
+            <li data-i18n="price.seller.li5">Commission applies only when a match leads to a sale</li>
+          </ul>
+          <a class="btn btn--outline" href="/get-started?role=seller" data-i18n="price.seller.cta">Start as a seller</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ — Conversational -->
+  <section class="section" id="faq">
+    <div class="bg-decor" aria-hidden="true">
+      <img class="bg-decor__truck" src="https://images.unsplash.com/photo-1780389098001-e641e50aeebd?fm=jpg&amp;q=60&amp;w=900&amp;h=700&amp;fit=crop&amp;auto=format" width="900" height="700" alt="" loading="lazy" />
+    </div>
+    <div class="container">
+      <div class="section-head reveal" style="--i:0">
+        <h2 data-i18n="faq.title">Questions, answered plainly</h2>
+      </div>
+      <div class="faq">
+        <details class="reveal" style="--i:1">
+          <summary><h3 data-i18n="faq.q1">How does matching actually work?</h3><span class="faq__icon"></span></summary>
+          <div class="faq__answer-wrap"><div class="faq__answer" data-i18n="faq.a1">You create a profile as a buyer or seller and set your criteria — equipment type, spec, budget or price, and location. Each day we check active buyer and seller criteria against each other. When there’s a match, our team reviews it — once approved, we share contact details so you can talk directly.</div></div>
+        </details>
+        <details class="reveal" style="--i:2">
+          <summary><h3 data-i18n="faq.q2">How are buyers and sellers verified?</h3><span class="faq__icon"></span></summary>
+          <div class="faq__answer-wrap"><div class="faq__answer" data-i18n="faq.a2">Before an account can send or receive a match, we confirm the business behind it — company registration and a working phone number, at minimum. We don’t match anonymous accounts.</div></div>
+        </details>
+        <details class="reveal" style="--i:3">
+          <summary><h3 data-i18n="faq.q3">Can I look around before I subscribe?</h3><span class="faq__icon"></span></summary>
+          <div class="faq__answer-wrap"><div class="faq__answer" data-i18n="faq.a3">Yes — the equipment categories we cover are visible without an account. Setting criteria and receiving a match requires an active buyer or seller subscription.</div></div>
+        </details>
+        <details class="reveal" style="--i:4">
+          <summary><h3 data-i18n="faq.q4">What happens after we’re matched?</h3><span class="faq__icon"></span></summary>
+          <div class="faq__answer-wrap"><div class="faq__answer" data-i18n="faq.a4">Once our team reviews and approves the match, we share contact details for both sides. From there, inspection and pricing are between you and the other party. If the match leads to a completed sale, a commission applies at a rate set by Yardline — see Pricing for details.</div></div>
+        </details>
+        <details class="reveal" style="--i:5">
+          <summary><h3 data-i18n="faq.q5">Which regions do you cover?</h3><span class="faq__icon"></span></summary>
+          <div class="faq__answer-wrap"><div class="faq__answer" data-i18n="faq.a5">Coverage depends on how many buyers and sellers are active in a region — matching gets better as more accounts join nearby. Set a location radius when you create your profile and we’ll only match within it.</div></div>
+        </details>
+        <details class="reveal" style="--i:6">
+          <summary><h3 data-i18n="faq.q6">Can I cancel my subscription anytime?</h3><span class="faq__icon"></span></summary>
+          <div class="faq__answer-wrap"><div class="faq__answer" data-i18n="faq.a6">Yes. Cancel from your account settings — you’ll keep matching until the end of the period you’ve already paid for, then it stops. No retention call required.</div></div>
+        </details>
+        <details class="reveal" style="--i:7">
+          <summary><h3 data-i18n="faq.q7">Is there a commission on top of the subscription?</h3><span class="faq__icon"></span></summary>
+          <div class="faq__answer-wrap"><div class="faq__answer" data-i18n="faq.a7">Yes. The subscription covers access to matching; when a match closes into a completed sale, a commission on the sale price applies too, at a rate set by Yardline and shown before you subscribe.</div></div>
+        </details>
+        <details class="reveal" style="--i:8">
+          <summary><h3 data-i18n="faq.q8">Does a subscription guarantee I’ll get matched or make a sale?</h3><span class="faq__icon"></span></summary>
+          <div class="faq__answer-wrap"><div class="faq__answer" data-i18n="faq.a8">No. A subscription gives you access to the matching system, and commission only applies if a sale actually happens — neither a match, a sale, nor a purchase is guaranteed.</div></div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA strip -->
+  <section class="cta-strip container reveal" style="--i:0">
+    <div class="bg-decor" aria-hidden="true">
+      <img class="bg-decor__crane" src="https://images.unsplash.com/photo-1660367439240-d38cb03a4365?fm=jpg&amp;q=60&amp;w=900&amp;h=600&amp;fit=crop&amp;auto=format" width="900" height="600" alt="" loading="lazy" />
+    </div>
+    <h2 data-i18n="cta.title">Ready to get matched?</h2>
+    <a class="btn btn--accent" href="/get-started" data-i18n="cta.button">Get started</a>
+  </section>
+
+</main>
+
+<footer class="foot-mast container">
+  <div class="bg-decor" aria-hidden="true">
+    <img class="bg-decor__aerial" src="https://images.unsplash.com/photo-1723367194881-fe2e53534170?fm=jpg&amp;q=60&amp;w=1200&amp;h=700&amp;fit=crop&amp;auto=format" width="1200" height="700" alt="" loading="lazy" />
+  </div>
+  <p class="wordmark">Yardline</p>
+  <p class="tagline muted" data-i18n="footer.tagline">Matching buyers and sellers of used industrial and construction machinery.</p>
+  <p class="links">
+    <a href="/get-started?role=buyer" data-i18n="footer.link.buyers">For Buyers</a>
+    <a href="/get-started?role=seller" data-i18n="footer.link.sellers">For Sellers</a>
+    <a href="#pricing" data-i18n="footer.link.pricing">Pricing</a>
+    <a href="/contact" data-i18n="footer.link.contact">Contact</a>
+  </p>
+  <p class="legal muted" data-i18n="footer.legal">© 2026 Yardline. Matches and sales are not guaranteed.</p>
+</footer>
+
+<script>
+(function () {
+  var nav = document.getElementById('nav');
+  var ticking = false;
+  function onScroll() {
+    if (!ticking) {
+      requestAnimationFrame(function () {
+        nav.classList.toggle('is-scrolled', window.scrollY > 12);
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  var targets = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    targets.forEach(function (t) { io.observe(t); });
+  } else {
+    targets.forEach(function (t) { t.classList.add('is-in'); });
+  }
+
+  /* -------------------------------------------------------------- */
+  /* Language toggle — English / Indonesian                          */
+  /* -------------------------------------------------------------- */
+
+  var idText = {
+    'meta.title': 'Yardline — Dicocokkan, bukan sekadar didaftar',
+    'meta.desc': 'Yardline mencocokkan pembeli dan penjual terverifikasi alat berat industri dan konstruksi bekas, lalu tidak ikut campur lagi.',
+    'nav.equipment': 'Jelajahi Alat',
+    'nav.how': 'Cara Kerja',
+    'nav.pricing': 'Harga',
+    'nav.login': 'Masuk',
+    'nav.start': 'Mulai',
+    'hero.title': 'Dicocokkan, bukan sekadar didaftar.',
+    'hero.lede': 'Yardline mencocokkan pembeli terverifikasi dengan penjual terverifikasi alat berat bekas — ekskavator, loader, crane, dan attachment. Atur kriteria Anda sekali — kami beri tahu saat pihak lain cocok.',
+    'hero.cta.buyer': 'Cari alat',
+    'hero.cta.seller': 'Daftarkan alat Anda',
+    'hero.trust': 'Akun pembeli dan penjual diverifikasi sebelum pencocokan dikirim.',
+    'match.label': 'Pratinjau pencocokan',
+    'match.buyerRole': 'Pembeli',
+    'match.buyerMeta': 'Wheel loader · dalam radius 240 km',
+    'match.sellerRole': 'Penjual',
+    'match.sellerMeta': '3 wheel loader tersedia',
+    'match.result': 'Disetujui — kontak dirilis',
+    'sides.title': 'Dua sisi, satu pencocokan',
+    'sides.desc': 'Yardline ada untuk menghubungkan dua sisi transaksi alat berat — bukan menjadi papan daftar yang harus dijelajahi salah satu pihak.',
+    'tile.buyers.title': 'Untuk pembeli',
+    'tile.buyers.body': 'Beri tahu kami kebutuhan Anda — kategori, spesifikasi, anggaran, dan lokasi. Kami cocokkan Anda dengan penjual yang memilikinya; setelah kami tinjau dan setujui pencocokannya, Anda mendapat detail kontak mereka.',
+    'tile.buyers.cta': 'Cari alat →',
+    'tile.sellers.title': 'Untuk penjual',
+    'tile.sellers.body': 'Daftarkan yang Anda jual, cukup sekali. Saat kriteria pembeli cocok dengan alat Anda, kami tinjau pencocokannya lalu pertemukan Anda — tanpa daftar publik, tanpa utas tawar-menawar.',
+    'tile.sellers.cta': 'Daftarkan alat →',
+    'tile.steps.title': 'Cara kerja pencocokan',
+    'tile.steps.s1': 'Atur kriteria Anda — apa yang Anda beli atau jual, dan di mana.',
+    'tile.steps.s2': 'Kami mencocokkannya dengan kriteria aktif pihak lain setiap hari.',
+    'tile.steps.s3': 'Saat cocok, tim kami meninjau lebih dulu sebelum Anda mendapat kontak pihak lain.',
+    'tile.equipment.title': 'Alat yang kami cakup',
+    'tile.equipment.body': 'Kategori ilustratif — pencocokan tergantung pada apa yang aktif di wilayah Anda.',
+    'chip.excavators': 'Ekskavator',
+    'chip.loaders': 'Wheel Loader',
+    'chip.cranes': 'Crane',
+    'chip.dozers': 'Dozer',
+    'chip.compactors': 'Compactor',
+    'chip.attachments': 'Attachment',
+    'tile.verified.title': 'Terverifikasi dua sisi',
+    'tile.verified.body': 'Setiap akun diperiksa sebelum bisa mengirim atau menerima pencocokan — detail bisnis dikonfirmasi, bukan sekadar alamat email.',
+    'tile.commission.title': 'Langganan, plus komisi',
+    'tile.commission.body': 'Langganan Anda mencakup akses ke sistem pencocokan. Saat pencocokan menghasilkan penjualan, komisi atas harga jual juga berlaku, dengan besaran yang ditetapkan oleh Yardline.',
+    'pricing.title': 'Harga',
+    'pricing.desc': 'Satu langganan untuk tiap pihak, ditambah komisi — ditetapkan oleh Yardline — saat pencocokan berhasil menjadi penjualan.',
+    'price.buyer.plan': 'Pembeli',
+    'price.seller.plan': 'Penjual',
+    'price.unit': '/ bulan',
+    'price.note': 'Harga akan dikonfirmasi',
+    'price.buyer.commission': '+ komisi atas harga beli, besaran ditetapkan Yardline',
+    'price.seller.commission': '+ komisi atas harga jual, besaran ditetapkan Yardline',
+    'price.buyer.desc': 'Untuk kontraktor dan tim pengadaan yang mencari alat tertentu.',
+    'price.seller.desc': 'Untuk dealer dan pemilik yang ingin melepas alat bekas dari inventaris.',
+    'price.buyer.li1': 'Kriteria pencocokan tanpa batas',
+    'price.buyer.li2': 'Diberi tahu pada hari penjual cocok',
+    'price.buyer.li3': 'Kontak langsung dengan penjual yang cocok',
+    'price.buyer.li4': 'Hanya jaringan penjual terverifikasi',
+    'price.buyer.li5': 'Komisi hanya berlaku saat pencocokan menghasilkan pembelian',
+    'price.buyer.cta': 'Mulai sebagai pembeli',
+    'price.seller.li1': 'Alat tanpa batas untuk dicocokkan',
+    'price.seller.li2': 'Prospek pembeli dikirim saat cocok',
+    'price.seller.li3': 'Kontak langsung dengan pembeli yang cocok',
+    'price.seller.li4': 'Hanya jaringan pembeli terverifikasi',
+    'price.seller.li5': 'Komisi hanya berlaku saat pencocokan menghasilkan penjualan',
+    'price.seller.cta': 'Mulai sebagai penjual',
+    'faq.title': 'Pertanyaan, dijawab apa adanya',
+    'faq.q1': 'Bagaimana sebenarnya cara kerja pencocokan?',
+    'faq.a1': 'Anda membuat profil sebagai pembeli atau penjual dan mengatur kriteria — jenis alat, spesifikasi, anggaran atau harga, dan lokasi. Setiap hari kami mencocokkan kriteria aktif pembeli dan penjual. Saat ada pencocokan, tim kami meninjaunya — setelah disetujui, kami bagikan detail kontak agar Anda bisa bicara langsung.',
+    'faq.q2': 'Bagaimana pembeli dan penjual diverifikasi?',
+    'faq.a2': 'Sebelum sebuah akun bisa mengirim atau menerima pencocokan, kami mengonfirmasi bisnis di baliknya — minimal registrasi perusahaan dan nomor telepon aktif. Kami tidak mencocokkan akun anonim.',
+    'faq.q3': 'Bisakah saya melihat-lihat sebelum berlangganan?',
+    'faq.a3': 'Bisa — kategori alat yang kami cakup dapat dilihat tanpa akun. Mengatur kriteria dan menerima pencocokan memerlukan langganan pembeli atau penjual yang aktif.',
+    'faq.q4': 'Apa yang terjadi setelah kami dicocokkan?',
+    'faq.a4': 'Setelah tim kami meninjau dan menyetujui pencocokannya, kami membagikan detail kontak untuk kedua sisi. Selanjutnya, inspeksi dan penentuan harga adalah urusan Anda dengan pihak lain. Jika pencocokan berhasil menjadi penjualan, komisi berlaku dengan besaran yang ditetapkan Yardline — lihat halaman Harga untuk detailnya.',
+    'faq.q5': 'Wilayah mana saja yang Anda cakup?',
+    'faq.a5': 'Cakupan tergantung pada jumlah pembeli dan penjual yang aktif di suatu wilayah — pencocokan makin baik seiring makin banyak akun bergabung di sekitar Anda. Atur radius lokasi saat membuat profil, dan kami hanya akan mencocokkan dalam radius tersebut.',
+    'faq.q6': 'Bisakah saya membatalkan langganan kapan saja?',
+    'faq.a6': 'Bisa. Batalkan dari pengaturan akun Anda — Anda tetap bisa mendapat pencocokan hingga akhir periode yang sudah dibayar, lalu berhenti. Tidak perlu panggilan retensi.',
+    'faq.q7': 'Apakah ada komisi selain biaya langganan?',
+    'faq.a7': 'Ya. Langganan mencakup akses ke sistem pencocokan; saat pencocokan berhasil menjadi penjualan, komisi atas harga jual juga berlaku, dengan besaran yang ditetapkan oleh Yardline dan ditampilkan sebelum Anda berlangganan.',
+    'faq.q8': 'Apakah langganan menjamin saya akan dapat pencocokan atau penjualan?',
+    'faq.a8': 'Tidak. Langganan memberi Anda akses ke sistem pencocokan, dan komisi hanya berlaku jika penjualan benar-benar terjadi — baik pencocokan, penjualan, maupun pembelian tidak dijamin.',
+    'cta.title': 'Siap untuk dicocokkan?',
+    'cta.button': 'Mulai',
+    'footer.tagline': 'Mencocokkan pembeli dan penjual alat berat industri dan konstruksi bekas.',
+    'footer.link.buyers': 'Untuk Pembeli',
+    'footer.link.sellers': 'Untuk Penjual',
+    'footer.link.pricing': 'Harga',
+    'footer.link.contact': 'Kontak',
+    'footer.legal': '© 2026 Yardline. Pencocokan dan penjualan tidak dijamin.'
+  };
+
+  var i18nEls = document.querySelectorAll('[data-i18n]');
+  var enText = {};
+  i18nEls.forEach(function (el) {
+    var key = el.dataset.i18n;
+    enText[key] = el.tagName === 'META' ? el.getAttribute('content') : el.innerHTML;
+  });
+
+  var langBtns = document.querySelectorAll('[data-lang-btn]');
+  var metaDesc = document.getElementById('meta-desc');
+
+  function setLang(lang) {
+    var dict = lang === 'id' ? idText : enText;
+    i18nEls.forEach(function (el) {
+      var key = el.dataset.i18n;
+      var value = dict[key] || enText[key];
+      if (el.tagName === 'META') {
+        el.setAttribute('content', value);
+      } else if (el.tagName === 'TITLE') {
+        el.textContent = value;
+      } else {
+        el.innerHTML = value;
+      }
+    });
+    document.documentElement.lang = lang;
+    langBtns.forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.dataset.langBtn === lang));
+    });
+    try { localStorage.setItem('yardline-lang', lang); } catch (e) {}
+  }
+
+  langBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () { setLang(btn.dataset.langBtn); });
+  });
+
+  var savedLang = null;
+  try { savedLang = localStorage.getItem('yardline-lang'); } catch (e) {}
+  if (savedLang === 'id') { setLang('id'); }
+})();
+</script>
+
+</body>
+</html>

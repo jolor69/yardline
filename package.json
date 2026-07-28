@@ -1,0 +1,21 @@
+{
+  "name": "yardline",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --persist-to=./.wrangler/state",
+    "deploy": "wrangler deploy",
+    "migrate:local": "wrangler d1 migrations apply yardline-db --local",
+    "migrate:remote": "wrangler d1 migrations apply yardline-db --remote",
+    "types": "wrangler types"
+  },
+  "dependencies": {
+    "hono": "^4.6.14",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2",
+    "wrangler": "^4.98.0"
+  }
+}

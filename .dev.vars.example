@@ -1,0 +1,6 @@
+# Copy this file to .dev.vars (gitignored) for local `wrangler dev`.
+# Get an OpenRouter key at https://openrouter.ai/keys
+OPENROUTER_API_KEY=sk-or-v1-...
+
+# For production, don't put the real key in any file — set it with:
+#   wrangler secret put OPENROUTER_API_KEY

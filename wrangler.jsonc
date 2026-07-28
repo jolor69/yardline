@@ -1,0 +1,39 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "yardline",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-07-27",
+
+  "assets": {
+    "directory": "./site",
+    "binding": "ASSETS"
+  },
+
+  // workers_dev must stay explicit — Wrangler silently disables it the
+  // moment a `routes` entry exists, which took the site offline once
+  // already (2026-07-27) when the custom_domain route below failed to
+  // attach. Keep this `true` until yardline.neulab.xyz is confirmed live.
+  "workers_dev": true,
+
+  "routes": [
+    { "pattern": "yardline.neulab.xyz", "custom_domain": true }
+  ],
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "yardline-db",
+      "database_id": "abd55551-dc06-448c-9441-da89f05b9d11",
+      "migrations_dir": "migrations"
+    }
+  ],
+
+  "r2_buckets": [
+    {
+      "binding": "PHOTOS",
+      "bucket_name": "yardline-photos"
+    }
+  ],
+
+  "observability": { "enabled": true, "head_sampling_rate": 0.1 }
+}

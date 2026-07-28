@@ -1,0 +1,6 @@
+{
+  "scanned": "2026-07-27",
+  "signals_found": false,
+  "notes": "No existing app code at project root (only the cloned hallmark skill repo). Full Hallmark stack used, nothing to preserve.",
+  "output_dir": "site/"
+}
