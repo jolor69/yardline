@@ -776,12 +776,14 @@
     try { localStorage.setItem("yardline-lang", lang); } catch (e) {}
   }
 
-  // Attach language toggle listeners with better event delegation
-  document.addEventListener("click", (e) => {
-    const langBtn = e.target.closest("[data-lang-btn]");
-    if (langBtn) {
-      setLang(langBtn.dataset.langBtn);
-    }
+  // Attach language toggle listeners
+  var langButtons = $$("[data-lang-btn]");
+  langButtons.forEach(function(btn) {
+    btn.addEventListener("click", function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      setLang(btn.dataset.langBtn);
+    });
   });
 
   let savedLang = null;
