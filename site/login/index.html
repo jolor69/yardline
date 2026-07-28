@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title data-i18n="login.meta.title">Log in to Yardline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+@import url("../tokens.css");
+
+* { box-sizing: border-box; }
+html, body { overflow-x: clip; }
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-paper);
+  color: var(--color-ink-2);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--lh-normal);
+}
+
+a { color: inherit; text-decoration: none; }
+
+h1 {
+  font-family: var(--font-display);
+  font-weight: var(--display-weight);
+  color: var(--color-ink);
+  margin: 0 0 var(--space-2xs);
+  font-size: var(--text-lg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* Header */
+.mast {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-lg);
+}
+
+.mast__brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.lang-toggle {
+  display: flex;
+  border: 1px solid var(--color-rule-2);
+  border-radius: var(--radius-pill);
+  padding: 2px;
+  gap: 2px;
+}
+
+.lang-btn {
+  position: relative;
+  border: none;
+  background: transparent;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  line-height: 1;
+  padding: var(--space-2xs) var(--space-xs);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: background-color var(--dur-short) var(--ease-out),
+              color var(--dur-short) var(--ease-out);
+}
+
+.lang-btn[aria-pressed="true"] { background: var(--color-paper-3); color: var(--color-ink); }
+
+@media (hover: hover) and (pointer: fine) {
+  .lang-btn:hover { color: var(--color-ink); }
+}
+
+.lang-btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+
+/* Main */
+main {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: var(--space-lg);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 24rem;
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-card);
+  padding: var(--space-xl);
+  background: var(--color-paper-2);
+}
+
+.login-card p.sub { color: var(--color-muted); font-size: var(--text-sm); margin: 0 0 var(--space-lg); }
+
+/* Forms */
+.field { display: flex; flex-direction: column; gap: var(--space-2xs); margin-bottom: var(--space-md); }
+.field label { font-size: var(--text-sm); font-weight: 600; color: var(--color-ink-2); }
+
+.input {
+  height: 44px;
+  padding-inline: var(--space-sm);
+  border-radius: var(--radius-input);
+  border: 1px solid var(--color-rule-2);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  outline: 2px solid transparent;
+  outline-offset: 1px;
+  transition: background-color var(--dur-short) var(--ease-out);
+  width: 100%;
+}
+
+.input:hover { background: var(--color-paper-2); }
+.input:focus-visible { outline-color: var(--color-focus); border-color: var(--color-ink-2); }
+.input:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2xs);
+  height: 40px;
+  padding-inline: var(--space-lg);
+  border-radius: var(--radius-pill);
+  border: none;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color var(--dur-short) var(--ease-out), transform 100ms var(--ease-out);
+}
+
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+
+.btn--accent { background: var(--color-accent); color: var(--color-accent-ink); }
+.btn--accent:hover { background: oklch(59% 0.17 28); }
+.btn--full { width: 100%; }
+
+.error-text { color: var(--color-error); font-size: var(--text-sm); min-height: 1lh; }
+
+/* Links */
+.form-footer {
+  margin-top: var(--space-lg);
+  text-align: center;
+  font-size: var(--text-sm);
+}
+
+.form-footer a {
+  color: var(--color-accent);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.form-footer a:hover {
+  color: oklch(59% 0.17 28);
+}
+
+.forgot-password {
+  display: block;
+  color: var(--color-accent);
+  font-weight: 600;
+  text-decoration: underline;
+  font-size: var(--text-sm);
+  text-align: right;
+  margin-top: -var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.forgot-password:hover {
+  color: oklch(59% 0.17 28);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition-duration: 1ms !important; }
+}
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <a class="mast__brand" href="/">Yardline</a>
+  <div class="lang-toggle" role="group" aria-label="Language">
+    <button type="button" class="lang-btn" data-lang-btn="en" aria-pressed="true">EN</button>
+    <button type="button" class="lang-btn" data-lang-btn="id" aria-pressed="false">ID</button>
+  </div>
+</header>
+
+<main>
+  <div class="login-card">
+    <h1 data-i18n="login.title">Log in</h1>
+    <p class="sub" data-i18n="login.subtitle">Sign in to your Yardline account</p>
+
+    <form id="login-form">
+      <div class="field">
+        <label for="email" data-i18n="login.email">Email</label>
+        <input class="input" id="email" type="email" autocomplete="username" required />
+      </div>
+
+      <div class="field">
+        <label for="password" data-i18n="login.password">Password</label>
+        <input class="input" id="password" type="password" autocomplete="current-password" required />
+        <a class="forgot-password" href="/reset-password" data-i18n="login.forgot">Forgot password?</a>
+      </div>
+
+      <p class="error-text" id="login-error"></p>
+      <button class="btn btn--accent btn--full" type="submit" id="login-submit" data-i18n="login.submit">Log in</button>
+    </form>
+
+    <div class="form-footer">
+      <p data-i18n="login.noAccount">Don't have an account? <a href="/get-started" data-i18n="login.signup">Sign up</a></p>
+    </div>
+  </div>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  var $ = function (sel) { return document.querySelector(sel); };
+
+  async function api(path, opts) {
+    var res = await fetch("/api" + path, Object.assign({ credentials: "include" }, opts, {
+      headers: Object.assign({ "Content-Type": "application/json" }, (opts && opts.headers) || {}),
+    }));
+    var text = await res.text();
+    var data = text ? JSON.parse(text) : null;
+    if (!res.ok) {
+      var err = new Error((data && data.error) || "Request failed");
+      err.status = res.status;
+      throw err;
+    }
+    return data;
+  }
+
+  var form = $("#login-form");
+  var submit = $("#login-submit");
+  var errorEl = $("#login-error");
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    errorEl.textContent = "";
+
+    var email = $("#email").value;
+    var password = $("#password").value;
+
+    submit.disabled = true;
+    try {
+      var account = await api("/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ email: email, password: password })
+      });
+
+      // Redirect based on role
+      if (account.role === "admin") {
+        window.location.href = "/admin";
+      } else if (account.role === "seller") {
+        window.location.href = "/seller";
+      } else {
+        // Buyers redirect to home for now (buyer dashboard doesn't exist yet)
+        window.location.href = "/";
+      }
+    } catch (err) {
+      errorEl.textContent = t("login.error") || err.message;
+    } finally {
+      submit.disabled = false;
+    }
+  });
+
+  /* Language toggle */
+  var idText = {
+    "login.meta.title": "Masuk ke Yardline",
+    "login.title": "Masuk",
+    "login.subtitle": "Masuk ke akun Yardline Anda",
+    "login.email": "Email",
+    "login.password": "Kata Sandi",
+    "login.forgot": "Lupa kata sandi?",
+    "login.submit": "Masuk",
+    "login.noAccount": "Belum punya akun? <a href=\"/get-started\" data-i18n=\"login.signup\">Daftar</a>",
+    "login.signup": "Daftar",
+    "login.error": "Email atau kata sandi salah"
+  };
+
+  var i18nEls = document.querySelectorAll("[data-i18n]");
+  var enText = {};
+  i18nEls.forEach(function (el) {
+    var key = el.dataset.i18n;
+    enText[key] = el.tagName === "TITLE" ? el.textContent : el.innerHTML;
+  });
+
+  var currentDict = enText;
+
+  function t(key) {
+    return currentDict[key] || enText[key] || key;
+  }
+
+  var langBtns = document.querySelectorAll("[data-lang-btn]");
+
+  function setLang(lang) {
+    currentDict = lang === "id" ? Object.assign({}, enText, idText) : enText;
+    i18nEls.forEach(function (el) {
+      var key = el.dataset.i18n;
+      var value = currentDict[key] || enText[key];
+      if (el.tagName === "TITLE") {
+        el.textContent = value;
+      } else {
+        el.innerHTML = value;
+      }
+    });
+    document.documentElement.lang = lang;
+    langBtns.forEach(function (b) {
+      b.setAttribute("aria-pressed", String(b.dataset.langBtn === lang));
+    });
+    try { localStorage.setItem("yardline-lang", lang); } catch (e) {}
+  }
+
+  langBtns.forEach(function (btn) {
+    btn.addEventListener("click", function () { setLang(btn.dataset.langBtn); });
+  });
+
+  var savedLang = null;
+  try { savedLang = localStorage.getItem("yardline-lang"); } catch (e) {}
+  if (savedLang === "id") { setLang("id"); }
+})();
+</script>
+
+</body>
+</html>
