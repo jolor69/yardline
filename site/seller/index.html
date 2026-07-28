@@ -522,6 +522,8 @@
 
     if (e.target.id === "create-listing-btn" || e.target.id === "new-listing-btn") {
       $("#create-listing-modal").classList.remove("is-hidden");
+      placeholderIndex = (placeholderIndex + 1) % placeholderSamples.en.length;
+      applyPlaceholder();
       return;
     }
 
@@ -752,13 +754,62 @@
     enText[key] = el.tagName === "TITLE" ? el.textContent : el.innerHTML;
   });
 
+  // These keys are only ever read dynamically (status badges, toasts) and
+  // never appear as a data-i18n attribute in the DOM, so the scan above
+  // can't discover their English text the way it does for static labels —
+  // list them explicitly to keep EN in parity with idText below.
+  Object.assign(enText, {
+    "seller.common.contact": "Contact",
+    "seller.common.delete": "Delete",
+    "seller.error.createFailed": "Failed to create listing",
+    "seller.error.loadFailed": "Failed to load data",
+    "seller.listings.created": "Listing created successfully!",
+    "seller.listings.errorTooShort": "Description must be at least 10 characters",
+    "seller.listings.status.active": "Active",
+    "seller.listings.status.inactive": "Inactive",
+    "seller.listings.status.needs_review": "Needs Review",
+    "seller.listings.status.ok": "Active",
+    "seller.listings.status.pending": "Draft",
+    "seller.matches.outcomeReported": "Outcome reported successfully!",
+    "seller.status.pending": "Pending",
+    "seller.status.verified": "Verified",
+  });
+
   let currentDict = enText;
 
   function t(key) {
     return currentDict[key] || enText[key] || key;
   }
 
+  // Sample descriptions rotated into the create-listing textarea placeholder,
+  // one language track so sellers see a realistic example in whichever
+  // language they've selected.
+  const placeholderSamples = {
+    en: [
+      "2019 Caterpillar 320 excavator, 4,200 hours, good condition, always shedded, no major repairs. Quick hitch and GPS ready. Asking $118,000 AUD. Located in Rockhampton, QLD.",
+      "Komatsu WA380-8 wheel loader, year 2017, 6,800 hours on the clock. Used but well maintained, tires at 70%. Comes with bucket and forks attachment. $95,000 negotiable. Toowoomba, Queensland.",
+      "Selling a Case 1650M dozer, 2015 model, approx 3,900 hours, fair condition — undercarriage will need attention in the next 12 months. Runs and operates well. $62,000. Based in Mackay QLD.",
+      "Volvo FH16 prime mover, 2012, 850,000 km, for parts only — engine seized. Cab and chassis in decent shape, good donor vehicle. $15,000 ONO. Brisbane."
+    ],
+    id: [
+      "Excavator Caterpillar 320 tahun 2019, 4.200 jam kerja, kondisi bagus, selalu di gudang, tidak pernah rusak berat. Sudah quick hitch dan siap GPS. Harga $118.000 AUD. Berlokasi di Rockhampton, QLD.",
+      "Wheel loader Komatsu WA380-8, tahun 2017, 6.800 jam kerja. Bekas tapi terawat baik, ban masih 70%. Sudah termasuk bucket dan attachment forks. $95.000, bisa nego. Toowoomba, Queensland.",
+      "Menjual dozer Case 1650M, tahun 2015, sekitar 3.900 jam kerja, kondisi cukup baik — undercarriage perlu perhatian dalam 12 bulan ke depan. Mesin dan operasional masih lancar. $62.000. Berlokasi di Mackay QLD.",
+      "Truk Volvo FH16, tahun 2012, 850.000 km, hanya untuk suku cadang — mesin mati total. Kabin dan sasis masih dalam kondisi cukup baik, cocok untuk donor. $15.000 nego. Brisbane."
+    ]
+  };
+  let currentLang = "en";
+  let placeholderIndex = 0;
+
+  function applyPlaceholder() {
+    const el = $("#listing-description");
+    if (!el) return;
+    const samples = placeholderSamples[currentLang] || placeholderSamples.en;
+    el.placeholder = samples[placeholderIndex % samples.length];
+  }
+
   function setLang(lang) {
+    currentLang = lang;
     currentDict = lang === "id" ? Object.assign({}, enText, idText) : enText;
     i18nEls.forEach(el => {
       const key = el.dataset.i18n;
@@ -773,6 +824,7 @@
     $$("[data-lang-btn]").forEach(b => {
       b.setAttribute("aria-pressed", String(b.dataset.langBtn === lang));
     });
+    applyPlaceholder();
     try { localStorage.setItem("yardline-lang", lang); } catch (e) {}
   }
 
@@ -790,6 +842,7 @@
   let savedLang = null;
   try { savedLang = localStorage.getItem("yardline-lang"); } catch (e) {}
   if (savedLang === "id") setLang("id");
+  else applyPlaceholder();
 
   // Init
   loadDashboard();

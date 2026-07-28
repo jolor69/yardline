@@ -6,6 +6,8 @@ import {
   getAccount,
   getListing,
   insertDraftListing,
+  listAllListings,
+  listListingsBySeller,
   updateListingFromExtraction,
 } from "../lib/db";
 import { safeJson } from "../lib/http";
@@ -132,6 +134,29 @@ app.post("/confirm", requireAuth, async (c) => {
   const { id, ...fields } = body.data;
   const listing = await confirmListing(c.env, id, fields);
   return c.json(listing);
+});
+
+// Backs the seller dashboard's "My Listings" table. A seller gets their own
+// listings (including drafts still needing review); an admin gets every
+// listing, or one seller's via ?account_id= for the same admin-on-behalf-of
+// pattern used by POST /.
+app.get("/", requireAuth, async (c) => {
+  const actor = c.get("account");
+  if (actor.role === "seller") {
+    return c.json(await listListingsBySeller(c.env, actor.id));
+  }
+  if (actor.role === "admin") {
+    const accountIdParam = c.req.query("account_id");
+    if (accountIdParam) {
+      const accountId = Number(accountIdParam);
+      if (!Number.isInteger(accountId)) {
+        return c.json({ error: "account_id must be an integer" }, 400);
+      }
+      return c.json(await listListingsBySeller(c.env, accountId));
+    }
+    return c.json(await listAllListings(c.env));
+  }
+  return c.json({ error: "Only sellers and admins can list listings" }, 403);
 });
 
 // Buyers never see raw listing rows directly — they only ever see listing
