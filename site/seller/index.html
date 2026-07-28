@@ -1,0 +1,601 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title data-i18n="seller.meta.title">Seller Dashboard - Yardline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="seller.css" />
+</head>
+<body>
+
+<div class="root">
+  <header class="mast">
+    <div class="mast__brand"><a href="/">Yardline</a></div>
+    <div class="mast__meta">
+      <div class="lang-toggle" role="group" aria-label="Language">
+        <button type="button" class="lang-btn" data-lang-btn="en" aria-pressed="true">EN</button>
+        <button type="button" class="lang-btn" data-lang-btn="id" aria-pressed="false">ID</button>
+      </div>
+      <div class="user-menu">
+        <span class="user-name" id="user-name"></span>
+        <button class="btn btn--sm" id="logout-btn" data-i18n="seller.logout">Log out</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="tabs-container">
+    <div class="tabs" role="tablist" aria-label="Dashboard navigation">
+      <button class="tab" role="tab" data-tab="dashboard" aria-selected="true" aria-controls="panel-dashboard" data-i18n="seller.nav.dashboard">Dashboard</button>
+      <button class="tab" role="tab" data-tab="listings" aria-selected="false" aria-controls="panel-listings" data-i18n="seller.nav.listings">My Listings</button>
+      <button class="tab" role="tab" data-tab="matches" aria-selected="false" aria-controls="panel-matches" data-i18n="seller.nav.matches">Matches</button>
+      <button class="tab" role="tab" data-tab="settings" aria-selected="false" aria-controls="panel-settings" data-i18n="seller.nav.settings">Settings</button>
+    </div>
+  </div>
+
+  <main class="main-content">
+    <!-- DASHBOARD TAB -->
+    <div class="tab-panel" id="panel-dashboard" role="tabpanel" data-panel="dashboard" aria-labelledby="tab-dashboard">
+      <div class="panel-header">
+        <h1 data-i18n="seller.dashboard.title">Dashboard</h1>
+      </div>
+
+      <!-- Account Summary Card -->
+      <div class="card">
+        <h2 data-i18n="seller.dashboard.account">Account Information</h2>
+        <div class="account-grid">
+          <div class="account-field">
+            <label data-i18n="seller.dashboard.company">Company Name</label>
+            <p id="account-company">—</p>
+          </div>
+          <div class="account-field">
+            <label data-i18n="seller.dashboard.status">Verification Status</label>
+            <p><span class="badge" id="account-status"></span></p>
+          </div>
+          <div class="account-field">
+            <label data-i18n="seller.dashboard.phone">Phone</label>
+            <p id="account-phone">—</p>
+          </div>
+          <div class="account-field">
+            <label data-i18n="seller.dashboard.email">Email</label>
+            <p id="account-email">—</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number" id="stat-listings">0</div>
+          <div class="stat-label" data-i18n="seller.dashboard.totalListings">Active Listings</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="stat-matches">0</div>
+          <div class="stat-label" data-i18n="seller.dashboard.totalMatches">Approved Matches</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="stat-photos">0</div>
+          <div class="stat-label" data-i18n="seller.dashboard.totalPhotos">Photos Uploaded</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="stat-sales">0</div>
+          <div class="stat-label" data-i18n="seller.dashboard.reportedSales">Sales Reported</div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="card">
+        <h2 data-i18n="seller.dashboard.quickActions">Quick Actions</h2>
+        <div class="action-buttons">
+          <button class="btn btn--accent" id="create-listing-btn" data-i18n="seller.dashboard.createListing">Create New Listing</button>
+          <button class="btn btn--outline" id="view-matches-btn" data-i18n="seller.dashboard.viewMatches">View All Matches</button>
+          <button class="btn btn--outline" id="manage-photos-btn" data-i18n="seller.dashboard.managePhotos">Manage Photos</button>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="card">
+        <h2 data-i18n="seller.dashboard.recentActivity">Recent Activity</h2>
+        <div id="activity-feed"></div>
+      </div>
+    </div>
+
+    <!-- LISTINGS TAB -->
+    <div class="tab-panel is-hidden" id="panel-listings" role="tabpanel" data-panel="listings" aria-labelledby="tab-listings">
+      <div class="panel-header">
+        <h1 data-i18n="seller.listings.title">My Listings</h1>
+        <button class="btn btn--accent" id="new-listing-btn" data-i18n="seller.listings.createNew">Create Listing</button>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters">
+        <label data-i18n="seller.listings.filterStatus">Filter by Status:</label>
+        <select id="status-filter" class="input">
+          <option value="">All</option>
+          <option value="active">Active</option>
+          <option value="draft">Draft</option>
+          <option value="needs_review">Needs Review</option>
+        </select>
+      </div>
+
+      <!-- Listings Table -->
+      <div class="table-wrap">
+        <table class="listings-table">
+          <thead>
+            <tr>
+              <th data-i18n="seller.listings.equipment">Equipment</th>
+              <th data-i18n="seller.listings.condition">Condition</th>
+              <th data-i18n="seller.listings.price">Price</th>
+              <th data-i18n="seller.listings.photos">Photos</th>
+              <th data-i18n="seller.listings.matches">Matches</th>
+              <th data-i18n="seller.listings.status">Status</th>
+              <th data-i18n="seller.listings.actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="listings-body">
+            <tr><td colspan="7" style="text-align: center; color: var(--color-muted);" data-i18n="seller.listings.loading">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MATCHES TAB -->
+    <div class="tab-panel is-hidden" id="panel-matches" role="tabpanel" data-panel="matches" aria-labelledby="tab-matches">
+      <div class="panel-header">
+        <h1 data-i18n="seller.matches.title">Approved Matches</h1>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters">
+        <label data-i18n="seller.matches.filterOutcome">Filter by Outcome:</label>
+        <select id="outcome-filter" class="input">
+          <option value="">All</option>
+          <option value="pending">Pending</option>
+          <option value="contacted">Contacted</option>
+          <option value="closed_sale">Sale Closed</option>
+          <option value="no_result">No Result</option>
+        </select>
+      </div>
+
+      <!-- Matches Table -->
+      <div class="table-wrap">
+        <table class="matches-table">
+          <thead>
+            <tr>
+              <th data-i18n="seller.matches.buyer">Buyer Company</th>
+              <th data-i18n="seller.matches.contact">Contact</th>
+              <th data-i18n="seller.matches.equipment">Equipment</th>
+              <th data-i18n="seller.matches.score">Fit Score</th>
+              <th data-i18n="seller.matches.outcome">Outcome</th>
+              <th data-i18n="seller.matches.actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="matches-body">
+            <tr><td colspan="6" style="text-align: center; color: var(--color-muted);" data-i18n="seller.matches.loading">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SETTINGS TAB -->
+    <div class="tab-panel is-hidden" id="panel-settings" role="tabpanel" data-panel="settings" aria-labelledby="tab-settings">
+      <div class="panel-header">
+        <h1 data-i18n="seller.settings.title">Settings</h1>
+      </div>
+
+      <!-- Account Settings -->
+      <div class="card">
+        <h2 data-i18n="seller.settings.account">Account Settings</h2>
+        <div class="field">
+          <label data-i18n="seller.settings.company">Company Name</label>
+          <p id="settings-company">—</p>
+        </div>
+        <div class="field">
+          <label data-i18n="seller.settings.email">Email</label>
+          <p id="settings-email">—</p>
+        </div>
+        <div class="field">
+          <label data-i18n="seller.settings.phone">Phone</label>
+          <p id="settings-phone">—</p>
+        </div>
+        <div class="field">
+          <label data-i18n="seller.settings.location">Location</label>
+          <p id="settings-location">—</p>
+        </div>
+      </div>
+
+      <!-- Security -->
+      <div class="card">
+        <h2 data-i18n="seller.settings.security">Security</h2>
+        <p data-i18n="seller.settings.passwordHint" style="color: var(--color-muted); font-size: var(--text-sm); margin-bottom: var(--space-md);">Forgot your password?</p>
+        <a href="/reset-password" class="btn btn--outline" data-i18n="seller.settings.resetPassword">Reset Password</a>
+      </div>
+
+      <!-- Danger Zone -->
+      <div class="card card--danger">
+        <h2 data-i18n="seller.settings.dangerZone">Danger Zone</h2>
+        <p data-i18n="seller.settings.logoutDesc" style="color: var(--color-muted); font-size: var(--text-sm); margin-bottom: var(--space-md);">Log out from your account.</p>
+        <button class="btn btn--outline" id="settings-logout-btn" data-i18n="seller.settings.logout">Log Out</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal for Create Listing (hidden by default) -->
+<div class="modal is-hidden" id="create-listing-modal">
+  <div class="modal__content">
+    <div class="modal__header">
+      <h2 data-i18n="seller.listings.createNew">Create New Listing</h2>
+      <button class="btn btn--sm" id="close-modal" aria-label="Close">×</button>
+    </div>
+    <form id="create-listing-form">
+      <div class="field">
+        <label for="listing-description" data-i18n="seller.listings.description">Equipment Description</label>
+        <textarea class="input" id="listing-description" rows="8" placeholder="Describe your equipment in detail..." required></textarea>
+        <p class="help-text" data-i18n="seller.listings.descriptionHint" style="font-size: var(--text-sm); color: var(--color-muted); margin-top: var(--space-2xs);">Minimum 10 characters. Include make, model, condition, hours, price.</p>
+      </div>
+      <p class="error-text" id="create-listing-error"></p>
+      <div style="display: flex; gap: var(--space-md); justify-content: flex-end;">
+        <button type="button" class="btn btn--outline" id="cancel-listing-btn" data-i18n="seller.common.cancel">Cancel</button>
+        <button type="submit" class="btn btn--accent" id="submit-listing-btn" data-i18n="seller.common.submit">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+(function() {
+  "use strict";
+
+  const $ = (sel) => document.querySelector(sel);
+  const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+
+  // API wrapper
+  async function api(path, opts) {
+    const res = await fetch("/api" + path, Object.assign({ credentials: "include" }, opts, {
+      headers: Object.assign({ "Content-Type": "application/json" }, (opts && opts.headers) || {})
+    }));
+    const text = await res.text();
+    const data = text ? JSON.parse(text) : null;
+    if (!res.ok) {
+      const err = new Error((data && data.error) || "Request failed");
+      err.status = res.status;
+      throw err;
+    }
+    return data;
+  }
+
+  // Toast notifications
+  function toast(msg, type = "info") {
+    const el = document.createElement("div");
+    el.className = `toast toast--${type}`;
+    el.textContent = msg;
+    el.style.cssText = `
+      position: fixed;
+      bottom: var(--space-lg);
+      right: var(--space-lg);
+      background: var(--color-accent);
+      color: var(--color-accent-ink);
+      padding: var(--space-md);
+      border-radius: var(--radius-pill);
+      z-index: 1000;
+      animation: slideIn 300ms ease-out;
+    `;
+    if (type === "error") el.style.background = "var(--color-error)";
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2600);
+  }
+
+  // Tab management
+  function showTab(tabName) {
+    $$("[role='tab']").forEach(t => t.setAttribute("aria-selected", "false"));
+    $$(".tab-panel").forEach(p => p.classList.add("is-hidden"));
+    const tab = $(`[data-tab='${tabName}']`);
+    const panel = $(`[data-panel='${tabName}']`);
+    if (tab && panel) {
+      tab.setAttribute("aria-selected", "true");
+      panel.classList.remove("is-hidden");
+      loadTabData(tabName);
+    }
+  }
+
+  // Tab data loading
+  async function loadTabData(tabName) {
+    try {
+      if (tabName === "listings") await loadListings();
+      if (tabName === "matches") await loadMatches();
+    } catch (err) {
+      toast(t("seller.error.loadFailed") || "Failed to load data", "error");
+    }
+  }
+
+  // Load listings
+  async function loadListings() {
+    try {
+      const listings = await api("/listings");
+      const tbody = $("#listings-body");
+      if (!listings || listings.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--color-muted);" data-i18n="seller.listings.noListings">No listings yet</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = listings.map(l => {
+        const statusBadge = l.extraction_status === "ok" ? "active" : l.extraction_status;
+        return `
+          <tr data-listing-id="${l.id}">
+            <td>${l.brand || "—"} ${l.model || "—"}</td>
+            <td>${l.condition || "—"}</td>
+            <td>${l.price ? `$${l.price}` : "—"}</td>
+            <td>0</td>
+            <td>0</td>
+            <td><span class="badge badge--${statusBadge}">${t(`seller.listings.status.${statusBadge}`) || statusBadge}</span></td>
+            <td>
+              <button class="btn btn--sm" data-action="view" data-listing-id="${l.id}" data-i18n="seller.common.view">View</button>
+              <button class="btn btn--sm" data-action="delete" data-listing-id="${l.id}" data-i18n="seller.common.delete">Delete</button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    } catch (err) {
+      toast(err.message || "Failed to load listings", "error");
+    }
+  }
+
+  // Load matches
+  async function loadMatches() {
+    try {
+      const matches = await api("/matches/mine");
+      const tbody = $("#matches-body");
+      if (!matches || matches.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--color-muted);" data-i18n="seller.matches.noMatches">No approved matches yet</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = matches.map(m => {
+        return `
+          <tr data-match-id="${m.id}">
+            <td>${m.buyer_contact?.company_name || "—"}</td>
+            <td>${m.buyer_contact?.phone || "—"}</td>
+            <td>${m.criteria?.category || "—"}</td>
+            <td>${Math.round(m.criteria_fit_score)}%</td>
+            <td>
+              <select class="outcome-select" data-match-id="${m.id}" style="font-size: var(--text-sm); padding: var(--space-2xs) var(--space-xs); border-radius: var(--radius-input); border: 1px solid var(--color-rule-2);">
+                <option value="pending" ${m.status === "pending" ? "selected" : ""}>Pending</option>
+                <option value="contacted" ${m.status === "contacted" ? "selected" : ""}>Contacted</option>
+                <option value="closed_sale" ${m.status === "closed_sale" ? "selected" : ""}>Sale Closed</option>
+                <option value="no_result" ${m.status === "no_result" ? "selected" : ""}>No Result</option>
+              </select>
+            </td>
+            <td>
+              <button class="btn btn--sm" data-action="contact" data-email="${m.buyer_contact?.email}" data-i18n="seller.common.contact">Contact</button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    } catch (err) {
+      toast(err.message || "Failed to load matches", "error");
+    }
+  }
+
+  // Load dashboard data
+  async function loadDashboard() {
+    try {
+      const account = await api("/auth/me");
+      $("#user-name").textContent = account.company_name;
+      $("#account-company").textContent = account.company_name;
+      $("#account-phone").textContent = account.phone || "—";
+      $("#account-email").textContent = account.email;
+      const statusBadge = $(`<span class="badge badge--${account.verification_status}">${t(`seller.status.${account.verification_status}`) || account.verification_status}</span>`);
+      $("#account-status").replaceWith(statusBadge);
+
+      $("#settings-company").textContent = account.company_name;
+      $("#settings-email").textContent = account.email;
+      $("#settings-phone").textContent = account.phone || "—";
+      $("#settings-location").textContent = account.city && account.region ? `${account.city}, ${account.region}` : "—";
+
+      const listings = await api("/listings");
+      const matches = await api("/matches/mine");
+      $("#stat-listings").textContent = listings.length;
+      $("#stat-matches").textContent = matches.length;
+      $("#stat-sales").textContent = matches.filter(m => m.status === "closed_sale").length;
+    } catch (err) {
+      if (err.status === 401) window.location.href = "/login";
+      else toast(err.message || "Failed to load dashboard", "error");
+    }
+  }
+
+  // Event delegation
+  document.addEventListener("click", async (e) => {
+    const tab = e.target.closest("[role='tab']");
+    if (tab) {
+      const tabName = tab.dataset.tab;
+      showTab(tabName);
+      return;
+    }
+
+    if (e.target.id === "logout-btn" || e.target.id === "settings-logout-btn") {
+      try {
+        await api("/auth/logout", { method: "POST" });
+        window.location.href = "/login";
+      } catch (err) {
+        toast(err.message || "Logout failed", "error");
+      }
+      return;
+    }
+
+    if (e.target.id === "create-listing-btn" || e.target.id === "new-listing-btn") {
+      $("#create-listing-modal").classList.remove("is-hidden");
+      return;
+    }
+
+    if (e.target.id === "close-modal" || e.target.id === "cancel-listing-btn") {
+      $("#create-listing-modal").classList.add("is-hidden");
+      return;
+    }
+
+    if (e.target.id === "view-matches-btn") {
+      showTab("matches");
+      return;
+    }
+
+    if (e.target.id === "manage-photos-btn") {
+      showTab("listings");
+      return;
+    }
+  });
+
+  // Create listing form
+  const createForm = $("#create-listing-form");
+  if (createForm) {
+    createForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const desc = $("#listing-description").value;
+      const errorEl = $("#create-listing-error");
+      errorEl.textContent = "";
+
+      if (desc.length < 10) {
+        errorEl.textContent = t("seller.listings.errorTooShort") || "Description must be at least 10 characters";
+        return;
+      }
+
+      try {
+        $("#submit-listing-btn").disabled = true;
+        await api("/listings", {
+          method: "POST",
+          body: JSON.stringify({ raw_description: desc })
+        });
+        toast(t("seller.listings.created") || "Listing created successfully!", "success");
+        $("#create-listing-modal").classList.add("is-hidden");
+        createForm.reset();
+        loadListings();
+      } catch (err) {
+        errorEl.textContent = err.message || t("seller.error.createFailed") || "Failed to create listing";
+      } finally {
+        $("#submit-listing-btn").disabled = false;
+      }
+    });
+  }
+
+  // i18n system
+  const idText = {
+    "seller.meta.title": "Dasbor Penjual - Yardline",
+    "seller.nav.dashboard": "Dasbor",
+    "seller.nav.listings": "Peralatan Saya",
+    "seller.nav.matches": "Kecocokan",
+    "seller.nav.settings": "Pengaturan",
+    "seller.logout": "Keluar",
+    "seller.dashboard.title": "Dasbor",
+    "seller.dashboard.account": "Informasi Akun",
+    "seller.dashboard.company": "Nama Perusahaan",
+    "seller.dashboard.status": "Status Verifikasi",
+    "seller.dashboard.phone": "Telepon",
+    "seller.dashboard.email": "Email",
+    "seller.dashboard.totalListings": "Peralatan Aktif",
+    "seller.dashboard.totalMatches": "Kecocokan Disetujui",
+    "seller.dashboard.totalPhotos": "Foto Diunggah",
+    "seller.dashboard.reportedSales": "Penjualan Dilaporkan",
+    "seller.dashboard.quickActions": "Aksi Cepat",
+    "seller.dashboard.createListing": "Buat Peralatan Baru",
+    "seller.dashboard.viewMatches": "Lihat Semua Kecocokan",
+    "seller.dashboard.managePhotos": "Kelola Foto",
+    "seller.dashboard.recentActivity": "Aktivitas Terbaru",
+    "seller.listings.title": "Peralatan Saya",
+    "seller.listings.createNew": "Buat Peralatan",
+    "seller.listings.filterStatus": "Filter berdasarkan Status:",
+    "seller.listings.equipment": "Peralatan",
+    "seller.listings.condition": "Kondisi",
+    "seller.listings.price": "Harga",
+    "seller.listings.photos": "Foto",
+    "seller.listings.matches": "Kecocokan",
+    "seller.listings.status": "Status",
+    "seller.listings.actions": "Aksi",
+    "seller.listings.loading": "Memuat...",
+    "seller.listings.noListings": "Belum ada peralatan",
+    "seller.listings.description": "Deskripsi Peralatan",
+    "seller.listings.descriptionHint": "Minimal 10 karakter. Sertakan merek, model, kondisi, jam kerja, harga.",
+    "seller.listings.created": "Peralatan berhasil dibuat!",
+    "seller.listings.errorTooShort": "Deskripsi harus minimal 10 karakter",
+    "seller.matches.title": "Kecocokan Disetujui",
+    "seller.matches.filterOutcome": "Filter berdasarkan Hasil:",
+    "seller.matches.buyer": "Perusahaan Pembeli",
+    "seller.matches.contact": "Kontak",
+    "seller.matches.equipment": "Peralatan",
+    "seller.matches.score": "Skor Kecocokan",
+    "seller.matches.outcome": "Hasil",
+    "seller.matches.actions": "Aksi",
+    "seller.matches.loading": "Memuat...",
+    "seller.matches.noMatches": "Belum ada kecocokan yang disetujui",
+    "seller.settings.title": "Pengaturan",
+    "seller.settings.account": "Pengaturan Akun",
+    "seller.settings.company": "Nama Perusahaan",
+    "seller.settings.email": "Email",
+    "seller.settings.phone": "Telepon",
+    "seller.settings.location": "Lokasi",
+    "seller.settings.security": "Keamanan",
+    "seller.settings.passwordHint": "Lupa kata sandi Anda?",
+    "seller.settings.resetPassword": "Atur Ulang Kata Sandi",
+    "seller.settings.dangerZone": "Zona Bahaya",
+    "seller.settings.logoutDesc": "Keluar dari akun Anda.",
+    "seller.settings.logout": "Keluar",
+    "seller.common.cancel": "Batal",
+    "seller.common.submit": "Kirim",
+    "seller.common.view": "Lihat",
+    "seller.common.delete": "Hapus",
+    "seller.common.contact": "Hubungi",
+    "seller.error.loadFailed": "Gagal memuat data",
+    "seller.error.createFailed": "Gagal membuat peralatan",
+    "seller.status.verified": "Terverifikasi",
+    "seller.status.pending": "Tertunda",
+    "seller.listings.status.ok": "Aktif",
+    "seller.listings.status.pending": "Draft",
+    "seller.listings.status.needs_review": "Perlu Ditinjau"
+  };
+
+  const i18nEls = $$("[data-i18n]");
+  const enText = {};
+  i18nEls.forEach(el => {
+    const key = el.dataset.i18n;
+    enText[key] = el.tagName === "TITLE" ? el.textContent : el.innerHTML;
+  });
+
+  let currentDict = enText;
+
+  function t(key) {
+    return currentDict[key] || enText[key] || key;
+  }
+
+  function setLang(lang) {
+    currentDict = lang === "id" ? Object.assign({}, enText, idText) : enText;
+    i18nEls.forEach(el => {
+      const key = el.dataset.i18n;
+      const value = currentDict[key] || enText[key];
+      if (el.tagName === "TITLE") {
+        el.textContent = value;
+      } else {
+        el.innerHTML = value;
+      }
+    });
+    document.documentElement.lang = lang;
+    $$("[data-lang-btn]").forEach(b => {
+      b.setAttribute("aria-pressed", String(b.dataset.langBtn === lang));
+    });
+    try { localStorage.setItem("yardline-lang", lang); } catch (e) {}
+  }
+
+  $$("[data-lang-btn]").forEach(btn => {
+    btn.addEventListener("click", () => setLang(btn.dataset.langBtn));
+  });
+
+  let savedLang = null;
+  try { savedLang = localStorage.getItem("yardline-lang"); } catch (e) {}
+  if (savedLang === "id") setLang("id");
+
+  // Init
+  loadDashboard();
+  showTab("dashboard");
+})();
+</script>
+
+</body>
+</html>
