@@ -776,8 +776,12 @@
     try { localStorage.setItem("yardline-lang", lang); } catch (e) {}
   }
 
-  $$("[data-lang-btn]").forEach(btn => {
-    btn.addEventListener("click", () => setLang(btn.dataset.langBtn));
+  // Attach language toggle listeners with better event delegation
+  document.addEventListener("click", (e) => {
+    const langBtn = e.target.closest("[data-lang-btn]");
+    if (langBtn) {
+      setLang(langBtn.dataset.langBtn);
+    }
   });
 
   let savedLang = null;
