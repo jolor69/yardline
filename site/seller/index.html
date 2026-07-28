@@ -777,13 +777,14 @@
   }
 
   // Attach language toggle listeners
-  var langButtons = $$("[data-lang-btn]");
-  langButtons.forEach(function(btn) {
-    btn.addEventListener("click", function(e) {
+  document.querySelectorAll("[data-lang-btn]").forEach(function(btn) {
+    btn.onclick = function(e) {
       e.preventDefault();
       e.stopPropagation();
-      setLang(btn.dataset.langBtn);
-    });
+      var lang = this.getAttribute("data-lang-btn");
+      setLang(lang);
+      return false;
+    };
   });
 
   let savedLang = null;
