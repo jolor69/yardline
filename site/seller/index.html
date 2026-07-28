@@ -377,26 +377,60 @@
         return;
       }
       tbody.innerHTML = matches.map(m => {
+        const outcomeLabel = m.status === "contacted" ? "Contacted" :
+                             m.status === "closed_sale" ? "Sale Closed" :
+                             m.status === "no_result" ? "No Result" : "Pending";
         return `
           <tr data-match-id="${m.id}">
-            <td>${m.buyer_contact?.company_name || "—"}</td>
-            <td>${m.buyer_contact?.phone || "—"}</td>
-            <td>${m.criteria?.category || "—"}</td>
-            <td>${Math.round(m.criteria_fit_score)}%</td>
+            <td style="font-weight: 600;">${m.buyer_contact?.company_name || "Unknown Buyer"}</td>
             <td>
-              <select class="outcome-select" data-match-id="${m.id}" style="font-size: var(--text-sm); padding: var(--space-2xs) var(--space-xs); border-radius: var(--radius-input); border: 1px solid var(--color-rule-2);">
-                <option value="pending" ${m.status === "pending" ? "selected" : ""}>Pending</option>
-                <option value="contacted" ${m.status === "contacted" ? "selected" : ""}>Contacted</option>
-                <option value="closed_sale" ${m.status === "closed_sale" ? "selected" : ""}>Sale Closed</option>
-                <option value="no_result" ${m.status === "no_result" ? "selected" : ""}>No Result</option>
-              </select>
+              <div style="font-size: var(--text-xs); color: var(--color-muted);">
+                <div>${m.buyer_contact?.phone || "—"}</div>
+                <div>${m.buyer_contact?.email || "—"}</div>
+              </div>
+            </td>
+            <td>${m.criteria?.category || "Equipment"}</td>
+            <td style="text-align: center; font-weight: 600; font-size: var(--text-lg);">${Math.round(m.criteria_fit_score)}%</td>
+            <td>
+              <span class="badge" style="background: ${m.status === "contacted" ? "#fff3d4" : m.status === "closed_sale" ? "#d1f5e9" : "#f0f0f0"}; color: ${m.status === "contacted" ? "#8b6914" : m.status === "closed_sale" ? "#0c6e54" : "var(--color-muted)"};">${outcomeLabel}</span>
             </td>
             <td>
-              <button class="btn btn--sm" data-action="contact" data-email="${m.buyer_contact?.email}" data-i18n="seller.common.contact">Contact</button>
+              <button class="btn btn--sm" data-action="report-outcome" data-match-id="${m.id}" data-i18n="seller.matches.reportOutcome">Report Outcome</button>
             </td>
           </tr>
         `;
       }).join("");
+
+      // Attach outcome reporting listeners
+      $$("[data-action='report-outcome']").forEach(btn => {
+        btn.addEventListener("click", async (e) => {
+          e.preventDefault();
+          const matchId = btn.dataset.matchId;
+          const match = matches.find(m => m.id === parseInt(matchId));
+          if (!match) return;
+
+          // Show outcome selection modal
+          const selected = prompt(
+            "Select outcome: 1=Contacted, 2=Sale Closed, 3=No Result",
+            match.status || "pending"
+          );
+          if (!selected) return;
+
+          const outcomeMap = { "1": "contacted", "2": "closed_sale", "3": "no_result" };
+          const outcome = outcomeMap[selected] || selected;
+
+          try {
+            await api(`/matches/${matchId}/outcome`, {
+              method: "POST",
+              body: JSON.stringify({ outcome })
+            });
+            toast(t("seller.matches.outcomeReported") || "Outcome reported successfully!", "success");
+            loadMatches(); // Reload matches to show updated status
+          } catch (err) {
+            toast(err.message || "Failed to report outcome", "error");
+          }
+        });
+      });
     } catch (err) {
       toast(err.message || "Failed to load matches", "error");
     }
@@ -673,6 +707,8 @@
     "seller.matches.actions": "Aksi",
     "seller.matches.loading": "Memuat...",
     "seller.matches.noMatches": "Belum ada kecocokan yang disetujui",
+    "seller.matches.reportOutcome": "Laporkan Hasil",
+    "seller.matches.outcomeReported": "Hasil berhasil dilaporkan!",
     "seller.settings.title": "Pengaturan",
     "seller.settings.account": "Pengaturan Akun",
     "seller.settings.company": "Nama Perusahaan",
