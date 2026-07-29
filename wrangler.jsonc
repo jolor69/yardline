@@ -23,7 +23,7 @@
     {
       "binding": "DB",
       "database_name": "yardline-db",
-      "database_id": "abd55551-dc06-448c-9441-da89f05b9d11",
+      "database_id": "a9c3e832-a2a3-4608-ac03-0d47b8d5b6e0",
       "migrations_dir": "migrations"
     }
   ],
