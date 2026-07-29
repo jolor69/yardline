@@ -41,13 +41,135 @@
   </header>
 
   <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" data-tab="guide" aria-selected="false">Guide</button>
     <button class="tab" role="tab" data-tab="accounts" aria-selected="true">Accounts</button>
     <button class="tab" role="tab" data-tab="matches" aria-selected="false">Matches</button>
     <button class="tab" role="tab" data-tab="listings" aria-selected="false">Listings</button>
+    <button class="tab" role="tab" data-tab="messages" aria-selected="false">Messages</button>
     <button class="tab" role="tab" data-tab="settings" aria-selected="false">Settings</button>
   </nav>
 
   <main>
+    <!-- Guide (admin-only manual — this whole panel requires an authenticated admin login to reach) -->
+    <section class="panel" id="panel-guide">
+      <div class="panel__head">
+        <div>
+          <h2>Admin Guide</h2>
+          <p>How to run the Accounts, Matches, Listings, Messages, and Settings tabs.</p>
+        </div>
+        <div class="lang-toggle" role="group" aria-label="Guide language">
+          <button type="button" class="lang-btn" data-guide-lang-btn="en" aria-pressed="true">EN</button>
+          <button type="button" class="lang-btn" data-guide-lang-btn="id" aria-pressed="false">ID</button>
+        </div>
+      </div>
+
+      <!-- English -->
+      <div data-guide-lang-block="en">
+        <div class="card guide-section">
+          <h3>1. Accounts</h3>
+          <p>Every buyer, seller, and admin is one row here. New accounts start with verification status <strong>"pending."</strong> Review a company's details and switch it to <strong>"verified"</strong> once you're satisfied it's a real business. Sellers additionally need <strong>"Self-list"</strong> checked before they can post listings themselves — until then, list on their behalf from the Listings tab. Use <strong>"Photo limit"</strong> to override the global default for a specific seller (e.g. a high-volume dealer who needs more than the default photo cap).</p>
+          <div class="guide-example"><strong>Example:</strong> "Borneo Earthworks Pty Ltd" signs up as a seller. You confirm by phone that they're a real dealership, set their verification to "verified," and tick "Self-list allowed" so they can post their own inventory going forward.</div>
+        </div>
+
+        <div class="card guide-section">
+          <h3>2. Matches</h3>
+          <p>This is Yardline's admin-curated introduction system, separate from open browsing. When the matching engine pairs a buyer's requirements with a seller's listing, it lands here as <strong>pending</strong> — invisible to both parties until you approve it. Review the fit score and equipment/buyer summary, then approve it for the buyer, the seller, or both. Approved matches move to the history list below and the relevant contact details become visible to whichever side(s) you approved.</p>
+          <div class="guide-example"><strong>Example:</strong> A pending match pairs "Test Buyer" (looking for excavators under $150,000 in QLD) with a 2019 Caterpillar 320 listing at 92% fit. You approve it for "both" — the buyer now sees the seller's contact info in their matches, and vice versa.</div>
+        </div>
+
+        <div class="card guide-section">
+          <h3>3. Listings</h3>
+          <p>Use the form here to list equipment <strong>on behalf of a seller</strong> — pick the seller from the dropdown, paste in a free-text description, and it goes through the same AI extraction and review flow a seller would use themselves. This is for sellers who haven't been granted self-listing yet, or who prefer to dictate a listing over the phone to your team. The table below shows every listing on the platform, across every seller, including drafts and ones flagged "needs review."</p>
+        </div>
+
+        <div class="card guide-section">
+          <h3>4. Messages</h3>
+          <p>Read-only oversight of every buyer&ndash;seller conversation on the platform, organized by listing. Click a conversation on the left to read the full thread on the right. This works whether or not "open marketplace" mode is currently on — you can always review conversation history, even if you've since turned browsing/messaging off for buyers and sellers. There's no reply box here by design — admin observes, it doesn't participate in buyer&ndash;seller conversations.</p>
+        </div>
+
+        <div class="card guide-section">
+          <h3>5. Settings — the "open marketplace" toggle</h3>
+          <p><strong>Default max photos per listing</strong> sets the platform-wide photo cap (override individual sellers from Accounts).</p>
+          <p><strong>Enable open marketplace</strong> is the main switch covered in this update. Turning it <strong>ON</strong> lets every buyer and seller browse the full catalog of live listings directly (Listings tab for buyers, Marketplace tab for sellers) — bypassing the admin-curated Matches queue entirely — and lets buyers message sellers (and sellers reply) about specific listings. Turning it <strong>OFF</strong> disables new browsing and new messages platform-wide, but any conversation that already exists stays fully readable by its participants and by you here in the Messages tab — nothing is deleted or hidden retroactively.</p>
+          <div class="guide-example"><strong>Example — enabling it:</strong> Go to Settings, check "Enable open marketplace," click Save. Within seconds, every buyer's Listings tab and every seller's Marketplace tab populates with live inventory, and "Message seller" buttons become clickable. No redeploy or per-account action needed — it's a single platform-wide switch.</div>
+        </div>
+
+        <div class="guide-dodont">
+          <div class="guide-dos">
+            <h4>Do's</h4>
+            <ul>
+              <li>Verify an account's real-world legitimacy before marking it "verified" or granting self-listing.</li>
+              <li>Review pending matches promptly — buyers and sellers are both waiting on your approval.</li>
+              <li>Check the Messages tab periodically for platform oversight, especially with open mode on.</li>
+              <li>Communicate with your team before flipping open mode off if there are many active conversations — existing threads stay readable, but new outreach stops immediately.</li>
+            </ul>
+          </div>
+          <div class="guide-donts">
+            <h4>Don'ts</h4>
+            <ul>
+              <li>Don't approve a match or verify an account without confirming the underlying details are accurate.</li>
+              <li>Don't grant self-listing to unverified accounts.</li>
+              <li>Don't share your admin login credentials with anyone — this account can see every conversation and every account on the platform.</li>
+              <li>Don't assume turning open mode off "deletes" anything — it only gates new browsing and new sends, existing data stays intact.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Indonesian -->
+      <div data-guide-lang-block="id" hidden>
+        <div class="card guide-section">
+          <h3>1. Akun (Accounts)</h3>
+          <p>Setiap pembeli, penjual, dan admin adalah satu baris di sini. Akun baru dimulai dengan status verifikasi <strong>"pending."</strong> Tinjau detail perusahaan dan ubah menjadi <strong>"verified"</strong> setelah Anda yakin itu bisnis yang sah. Penjual juga memerlukan centang <strong>"Self-list"</strong> sebelum bisa memasang listing sendiri — sebelum itu, pasangkan listing atas nama mereka dari tab Listings. Gunakan <strong>"Photo limit"</strong> untuk mengganti batas foto global khusus untuk penjual tertentu (misalnya dealer bervolume tinggi yang butuh lebih banyak dari batas default).</p>
+          <div class="guide-example"><strong>Contoh:</strong> "Borneo Earthworks Pty Ltd" mendaftar sebagai penjual. Anda konfirmasi lewat telepon bahwa mereka dealer sungguhan, ubah verifikasi menjadi "verified," dan centang "Self-list allowed" agar mereka bisa memasang inventaris sendiri selanjutnya.</div>
+        </div>
+
+        <div class="card guide-section">
+          <h3>2. Kecocokan (Matches)</h3>
+          <p>Ini adalah sistem perkenalan yang dikurasi admin Yardline, terpisah dari penjelajahan terbuka. Ketika mesin pencocokan memasangkan kebutuhan pembeli dengan listing penjual, hasilnya muncul di sini sebagai <strong>pending</strong> — tidak terlihat oleh kedua pihak sampai Anda menyetujuinya. Tinjau skor kecocokan serta ringkasan peralatan/pembeli, lalu setujui untuk pembeli, penjual, atau keduanya. Kecocokan yang disetujui pindah ke daftar riwayat di bawah, dan detail kontak yang relevan menjadi terlihat oleh pihak yang Anda setujui.</p>
+          <div class="guide-example"><strong>Contoh:</strong> Sebuah kecocokan pending memasangkan "Test Buyer" (mencari ekskavator di bawah $150.000 di QLD) dengan listing Caterpillar 320 tahun 2019 dengan skor kecocokan 92%. Anda setujui untuk "keduanya" — pembeli kini melihat info kontak penjual di kecocokan mereka, dan sebaliknya.</div>
+        </div>
+
+        <div class="card guide-section">
+          <h3>3. Listing (Listings)</h3>
+          <p>Gunakan formulir di sini untuk memasang peralatan <strong>atas nama penjual</strong> — pilih penjual dari menu dropdown, tempel deskripsi bebas, dan itu akan melalui alur ekstraksi AI dan peninjauan yang sama seperti yang digunakan penjual sendiri. Ini untuk penjual yang belum diberi izin self-listing, atau yang lebih suka mendiktekan listing lewat telepon ke tim Anda. Tabel di bawah menampilkan semua listing di platform, dari semua penjual, termasuk draft dan yang ditandai "needs review."</p>
+        </div>
+
+        <div class="card guide-section">
+          <h3>4. Pesan (Messages)</h3>
+          <p>Pengawasan baca-saja (read-only) atas semua percakapan pembeli&ndash;penjual di platform, disusun berdasarkan listing. Klik percakapan di sebelah kiri untuk membaca percakapan lengkap di sebelah kanan. Ini berfungsi baik saat mode "pasar terbuka" aktif maupun tidak — Anda selalu bisa meninjau riwayat percakapan, bahkan setelah Anda menonaktifkan penjelajahan/pesan untuk pembeli dan penjual. Tidak ada kotak balasan di sini secara sengaja — admin mengamati, bukan berpartisipasi dalam percakapan pembeli&ndash;penjual.</p>
+        </div>
+
+        <div class="card guide-section">
+          <h3>5. Pengaturan (Settings) — sakelar "pasar terbuka"</h3>
+          <p><strong>Default max photos per listing</strong> mengatur batas foto berlaku untuk seluruh platform (bisa diganti per penjual dari tab Accounts).</p>
+          <p><strong>Enable open marketplace</strong> adalah sakelar utama dari pembaruan ini. Mengaktifkannya (<strong>ON</strong>) memungkinkan setiap pembeli dan penjual menjelajahi seluruh katalog listing aktif secara langsung (tab Listings untuk pembeli, tab Marketplace untuk penjual) — melewati antrean Matches yang dikurasi admin sepenuhnya — dan memungkinkan pembeli mengirim pesan ke penjual (serta penjual membalas) tentang listing tertentu. Menonaktifkannya (<strong>OFF</strong>) menghentikan penjelajahan baru dan pesan baru di seluruh platform, tetapi percakapan yang sudah ada tetap bisa dibaca sepenuhnya oleh para pesertanya dan oleh Anda di tab Messages ini — tidak ada yang dihapus atau disembunyikan secara retroaktif.</p>
+          <div class="guide-example"><strong>Contoh — mengaktifkan:</strong> Buka Settings, centang "Enable open marketplace," klik Save. Dalam hitungan detik, tab Listings setiap pembeli dan tab Marketplace setiap penjual akan terisi inventaris aktif, dan tombol "Message seller" menjadi bisa diklik. Tidak perlu deploy ulang atau tindakan per akun — ini sakelar tunggal untuk seluruh platform.</div>
+        </div>
+
+        <div class="guide-dodont">
+          <div class="guide-dos">
+            <h4>Yang Sebaiknya Dilakukan</h4>
+            <ul>
+              <li>Verifikasi legitimasi akun di dunia nyata sebelum menandainya "verified" atau memberi izin self-listing.</li>
+              <li>Tinjau kecocokan pending secepatnya — pembeli dan penjual sama-sama menunggu persetujuan Anda.</li>
+              <li>Periksa tab Messages secara berkala untuk pengawasan platform, terutama saat mode terbuka aktif.</li>
+              <li>Komunikasikan dengan tim Anda sebelum menonaktifkan mode terbuka jika ada banyak percakapan aktif — percakapan yang ada tetap bisa dibaca, tetapi jangkauan baru langsung berhenti.</li>
+            </ul>
+          </div>
+          <div class="guide-donts">
+            <h4>Yang Sebaiknya Dihindari</h4>
+            <ul>
+              <li>Jangan menyetujui kecocokan atau memverifikasi akun tanpa mengonfirmasi detail yang mendasarinya akurat.</li>
+              <li>Jangan memberikan izin self-listing kepada akun yang belum terverifikasi.</li>
+              <li>Jangan membagikan kredensial login admin Anda kepada siapa pun — akun ini dapat melihat semua percakapan dan semua akun di platform.</li>
+              <li>Jangan berasumsi menonaktifkan mode terbuka "menghapus" apa pun — itu hanya membatasi penjelajahan dan pengiriman baru, data yang ada tetap utuh.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Accounts -->
     <section class="panel is-active" id="panel-accounts">
       <div class="panel__head">
@@ -85,6 +207,7 @@
           <h2>Pending matches</h2>
           <p>A match is invisible to both parties until approved here.</p>
         </div>
+        <button class="btn btn--accent btn--sm" id="run-matching-btn" type="button">Run Matching</button>
       </div>
       <div id="pending-matches" style="display:flex; flex-direction:column; gap: var(--space-sm);"></div>
       <p class="empty-state" id="pending-empty" hidden>Nothing waiting on review.</p>
@@ -170,6 +293,24 @@
       <p class="empty-state" id="listings-empty" hidden>No listings yet.</p>
     </section>
 
+    <!-- Messages -->
+    <section class="panel" id="panel-messages">
+      <div class="panel__head">
+        <div>
+          <h2>Conversations</h2>
+          <p>Every buyer&ndash;seller conversation, for oversight. Read-only &mdash; admin doesn't participate.</p>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns: 18rem 1fr; gap: var(--space-lg); align-items:start; min-height: 24rem;">
+        <div class="table-wrap" id="admin-conversations-list" style="max-height: 28rem; overflow-y:auto;"></div>
+        <div class="table-wrap" style="min-height: 24rem; display:flex; flex-direction:column;">
+          <div style="padding: var(--space-md); border-bottom: 1px solid var(--color-rule-2); font-weight:600;" id="admin-thread-header">Select a conversation</div>
+          <div id="admin-thread-messages" style="flex:1; overflow-y:auto; padding: var(--space-md); display:flex; flex-direction:column; gap: var(--space-sm);"></div>
+        </div>
+      </div>
+      <p class="empty-state" id="messages-empty" hidden>No conversations yet.</p>
+    </section>
+
     <!-- Settings -->
     <section class="panel" id="panel-settings">
       <div class="panel__head">
@@ -182,6 +323,9 @@
         <div class="field">
           <label for="default-max-photos">Default max photos per listing</label>
           <input class="input" id="default-max-photos" type="number" min="1" required />
+        </div>
+        <div class="field">
+          <label><input type="checkbox" id="open-mode-enabled" /> Enable open marketplace (buyers &amp; sellers browse all listings + messaging)</label>
         </div>
         <button class="btn btn--accent" type="submit">Save</button>
       </form>
@@ -254,6 +398,7 @@
     loadApprovedMatches();
     loadSellersIntoSelect();
     loadListings();
+    loadMessages();
     loadSettings();
   }
 
@@ -398,6 +543,22 @@
     matches.forEach((m) => wrap.appendChild(matchCard(m, true)));
   }
 
+  $("#run-matching-btn").addEventListener("click", async () => {
+    const btn = $("#run-matching-btn");
+    btn.disabled = true;
+    btn.textContent = "Running…";
+    try {
+      const result = await api("/match/run-all", { method: "POST" });
+      toast(`Matching run: ${result.criteria_processed} inquiries checked, ${result.matches_created} new match${result.matches_created === 1 ? "" : "es"} created`);
+      await loadPendingMatches();
+    } catch (err) {
+      toast(err.message, true);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Run Matching";
+    }
+  });
+
   $("#pending-matches").addEventListener("click", async (e) => {
     const btn = e.target.closest("[data-approve]");
     if (!btn) return;
@@ -501,22 +662,85 @@
     });
   }
 
+  // ---- Messages (oversight, read-only) ----
+
+  async function loadMessages() {
+    const conversations = await api("/admin/messages/conversations");
+    const listEl = $("#admin-conversations-list");
+    $("#messages-empty").hidden = conversations.length > 0;
+    if (conversations.length === 0) {
+      listEl.innerHTML = "";
+      return;
+    }
+    listEl.innerHTML = conversations.map((c) => {
+      const label = (esc(c.listing_brand || "") + " " + esc(c.listing_model || "")).trim() || esc(c.listing_category || "Listing");
+      return `
+        <button type="button" class="conversation-item" style="display:block; width:100%; text-align:left; padding: var(--space-sm) var(--space-md); border:none; border-bottom:1px solid var(--color-rule-2); background:transparent; cursor:pointer; font-family:inherit;"
+          data-listing-id="${c.listing_id}" data-buyer-id="${c.buyer_account_id}" data-seller-id="${c.seller_account_id}"
+          data-label="${esc(c.buyer_company || "Buyer")} &harr; ${esc(c.seller_company || "Seller")} · ${label}">
+          <div style="font-weight:600; font-size: var(--text-sm);">${esc(c.buyer_company || "Buyer")} &harr; ${esc(c.seller_company || "Seller")}</div>
+          <div style="font-size: var(--text-xs); color: var(--color-muted);">${label}</div>
+        </button>
+      `;
+    }).join("");
+  }
+
+  $("#admin-conversations-list").addEventListener("click", async (e) => {
+    const item = e.target.closest(".conversation-item");
+    if (!item) return;
+    $$("#admin-conversations-list .conversation-item").forEach((el) => (el.style.background = "transparent"));
+    item.style.background = "var(--color-paper-3)";
+    $("#admin-thread-header").textContent = item.dataset.label;
+    const messages = await api(`/admin/messages/${item.dataset.listingId}/${item.dataset.buyerId}/${item.dataset.sellerId}`);
+    const box = $("#admin-thread-messages");
+    if (messages.length === 0) {
+      box.innerHTML = `<p class="empty-state">No messages in this thread.</p>`;
+      return;
+    }
+    box.innerHTML = messages.map((m) => {
+      const isBuyer = m.sender_account_id === Number(item.dataset.buyerId);
+      return `
+        <div style="max-width:75%; align-self:${isBuyer ? "flex-start" : "flex-end"}; padding: var(--space-sm) var(--space-md); border-radius: var(--radius-card); background:${isBuyer ? "var(--color-paper-3)" : "var(--color-accent)"}; color:${isBuyer ? "inherit" : "var(--color-accent-ink)"}; font-size: var(--text-sm);">
+          ${esc(m.body)}
+          <div style="font-size: var(--text-xs); opacity:0.7; margin-top: var(--space-2xs);">${new Date(m.created_at).toLocaleString()}</div>
+        </div>
+      `;
+    }).join("");
+    box.scrollTop = box.scrollHeight;
+  });
+
   // ---- Settings ----
 
   async function loadSettings() {
     const s = await api("/admin/settings/default-max-photos");
     $("#default-max-photos").value = s.default_max_photos;
+    const om = await api("/admin/settings/open-mode");
+    $("#open-mode-enabled").checked = om.open_mode_enabled;
   }
 
   $("#settings-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     const value = Number($("#default-max-photos").value);
+    const openModeEnabled = $("#open-mode-enabled").checked;
     try {
       await api("/admin/settings/default-max-photos", { method: "PATCH", body: JSON.stringify({ default_max_photos: value }) });
+      await api("/admin/settings/open-mode", { method: "PATCH", body: JSON.stringify({ open_mode_enabled: openModeEnabled }) });
       toast("Settings saved");
     } catch (err) {
       toast(err.message, true);
     }
+  });
+
+  // ---- Guide panel language toggle (scoped to this panel only) ----
+
+  $$("[data-guide-lang-btn]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const lang = btn.dataset.guideLangBtn;
+      $$("[data-guide-lang-btn]").forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+      $$("[data-guide-lang-block]").forEach((el) => {
+        el.hidden = el.dataset.guideLangBlock !== lang;
+      });
+    });
   });
 
   boot();

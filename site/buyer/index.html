@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title data-i18n="buyer.meta.title">Buyer Dashboard - Yardline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="buyer.css" />
+</head>
+<body>
+
+<div class="root">
+  <header class="mast">
+    <div class="mast__brand"><a href="/">Yardline</a></div>
+    <div class="mast__meta">
+      <div class="lang-toggle" role="group" aria-label="Language">
+        <button type="button" class="lang-btn" data-lang-btn="en" aria-pressed="true">EN</button>
+        <button type="button" class="lang-btn" data-lang-btn="id" aria-pressed="false">ID</button>
+      </div>
+      <div class="user-menu">
+        <span class="user-name" id="user-name"></span>
+        <button class="btn btn--sm" id="logout-btn" data-i18n="buyer.logout">Log out</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="tabs-container">
+    <div class="tabs" role="tablist" aria-label="Dashboard navigation">
+      <button class="tab" role="tab" data-tab="guide" aria-selected="false" aria-controls="panel-guide" data-i18n="buyer.nav.guide">Guide</button>
+      <button class="tab" role="tab" data-tab="listings" aria-selected="true" aria-controls="panel-listings" data-i18n="buyer.nav.listings">Listings</button>
+      <button class="tab" role="tab" data-tab="messages" aria-selected="false" aria-controls="panel-messages" data-i18n="buyer.nav.messages">Messages</button>
+    </div>
+  </div>
+
+  <main class="main-content">
+    <!-- GUIDE TAB -->
+    <div class="tab-panel is-hidden" id="panel-guide" role="tabpanel" data-panel="guide" aria-labelledby="tab-guide">
+      <div class="panel-header">
+        <h1 data-i18n="buyer.guide.title">Buyer Guide</h1>
+      </div>
+
+      <!-- English -->
+      <div data-lang-block="en">
+        <div class="card guide-section">
+          <h3>1. Creating your account &amp; logging in</h3>
+          <ol>
+            <li>Go to <strong>/get-started</strong> and choose <strong>"I'm a buyer."</strong></li>
+            <li>Fill in your company name, a valid email address, and a password (at least 8 characters). Phone and location are optional but help sellers trust your inquiries.</li>
+            <li>Submit the form — you're logged in immediately and taken straight to this dashboard.</li>
+            <li>Next time, go to <strong>/login</strong> and sign in with the same email and password. Use <strong>"Reset Password"</strong> on the login page if you forget it.</li>
+          </ol>
+          <div class="guide-example"><strong>Example:</strong> Company name "Borneo Earthworks Pty Ltd", email "purchasing@borneoearthworks.com", password "at least 8 characters, ideally a mix of letters and numbers."</div>
+        </div>
+
+        <div class="card guide-section">
+          <h3>2. Browsing the marketplace</h3>
+          <p>The <strong>Listings</strong> tab shows every live piece of equipment currently for sale on Yardline — brand, model, year, hours, condition, price, and location, plus which seller account posted it.</p>
+          <p><strong>Note:</strong> browsing is only turned on when the Yardline admin team enables "open marketplace" mode. If it's off, you'll see a message that browsing isn't available yet — check back later, or contact Yardline support.</p>
+          <div class="guide-example"><strong>Example:</strong> Looking for a 2018–2020 excavator under $150,000 in Queensland? Scan the Listings table, use the Year/Price/Location columns to compare candidates, and click into the ones that fit.</div>
+        </div>
+
+        <div class="card guide-section">
+          <h3>3. Messaging a seller</h3>
+          <ol>
+            <li>From the Listings tab, click <strong>"Message seller"</strong> on any listing you're interested in.</li>
+            <li>Type your first message and send it — this starts a private conversation between you and that seller about that specific listing.</li>
+            <li>Find all your ongoing conversations in the <strong>Messages</strong> tab. Click one to open the full thread and keep chatting.</li>
+            <li>Only you and that seller can ever see this conversation — not other buyers, not other sellers.</li>
+          </ol>
+          <div class="guide-example"><strong>Example first message:</strong> "Hi, is the 2019 Komatsu PC200 still available? Can you tell me more about the undercarriage condition and whether the price is negotiable?"</div>
+        </div>
+
+        <div class="card guide-section">
+          <h3>4. Walkthrough example</h3>
+          <p>You need a dozer for a job starting next month. You open the <strong>Listings</strong> tab, filter mentally by category and year, and find a 2015 Case 1650M dozer in Mackay, QLD for $62,000. You click <strong>Message seller</strong> and ask about undercarriage condition and whether an inspection can be arranged. The seller replies within the <strong>Messages</strong> tab. You negotiate details directly with them — Yardline connects you, the deal itself happens between you and the seller.</p>
+        </div>
+
+        <div class="guide-dodont">
+          <div class="guide-dos">
+            <h4>Do's</h4>
+            <ul>
+              <li>Use your real company name and a business email when signing up — it builds trust with sellers.</li>
+              <li>Check the Listings tab regularly; new equipment is added often.</li>
+              <li>Ask specific questions in your first message (year, hours, condition, price flexibility, inspection availability).</li>
+              <li>Keep your password private and log out on shared or public computers.</li>
+            </ul>
+          </div>
+          <div class="guide-donts">
+            <h4>Don'ts</h4>
+            <ul>
+              <li>Don't share your login credentials with anyone else.</li>
+              <li>Don't expect to browse or message if the admin hasn't enabled open marketplace mode yet.</li>
+              <li>Don't send generic copy-paste messages to many sellers — specific questions get better answers.</li>
+              <li>Don't assume another buyer can see your conversations — they're private to you and the seller.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Indonesian -->
+      <div data-lang-block="id" hidden>
+        <div class="card guide-section">
+          <h3>1. Membuat akun &amp; masuk</h3>
+          <ol>
+            <li>Buka <strong>/get-started</strong> dan pilih <strong>"Saya pembeli."</strong></li>
+            <li>Isi nama perusahaan, alamat email yang valid, dan kata sandi (minimal 8 karakter). Nomor telepon dan lokasi bersifat opsional, tetapi membantu penjual mempercayai pertanyaan Anda.</li>
+            <li>Kirim formulir — Anda langsung masuk dan diarahkan ke dasbor ini.</li>
+            <li>Selanjutnya, buka <strong>/login</strong> dan masuk dengan email serta kata sandi yang sama. Gunakan <strong>"Atur Ulang Kata Sandi"</strong> di halaman login jika Anda lupa.</li>
+          </ol>
+          <div class="guide-example"><strong>Contoh:</strong> Nama perusahaan "Borneo Earthworks Pty Ltd", email "purchasing@borneoearthworks.com", kata sandi "minimal 8 karakter, sebaiknya kombinasi huruf dan angka."</div>
+        </div>
+
+        <div class="card guide-section">
+          <h3>2. Menjelajahi pasar</h3>
+          <p>Tab <strong>Peralatan</strong> menampilkan semua alat berat yang sedang dijual di Yardline — merek, model, tahun, jam kerja, kondisi, harga, dan lokasi, beserta akun penjual yang memasangnya.</p>
+          <p><strong>Catatan:</strong> penjelajahan hanya aktif ketika tim admin Yardline mengaktifkan mode "pasar terbuka". Jika belum aktif, Anda akan melihat pesan bahwa penjelajahan belum tersedia — coba lagi nanti, atau hubungi dukungan Yardline.</p>
+          <div class="guide-example"><strong>Contoh:</strong> Mencari ekskavator tahun 2018–2020 di bawah $150.000 di Queensland? Telusuri tabel Peralatan, gunakan kolom Tahun/Harga/Lokasi untuk membandingkan, lalu klik yang sesuai.</div>
+        </div>
+
+        <div class="card guide-section">
+          <h3>3. Mengirim pesan ke penjual</h3>
+          <ol>
+            <li>Dari tab Peralatan, klik <strong>"Kirim Pesan"</strong> pada peralatan yang Anda minati.</li>
+            <li>Ketik pesan pertama Anda dan kirim — ini memulai percakapan pribadi antara Anda dan penjual tersebut mengenai peralatan itu.</li>
+            <li>Temukan semua percakapan Anda yang sedang berlangsung di tab <strong>Pesan</strong>. Klik salah satu untuk membuka percakapan lengkap dan melanjutkan obrolan.</li>
+            <li>Hanya Anda dan penjual tersebut yang dapat melihat percakapan ini — bukan pembeli lain, bukan penjual lain.</li>
+          </ol>
+          <div class="guide-example"><strong>Contoh pesan pertama:</strong> "Halo, apakah Komatsu PC200 tahun 2019 ini masih tersedia? Bisa ceritakan lebih lanjut soal kondisi undercarriage dan apakah harganya bisa dinego?"</div>
+        </div>
+
+        <div class="card guide-section">
+          <h3>4. Contoh alur lengkap</h3>
+          <p>Anda membutuhkan dozer untuk pekerjaan yang dimulai bulan depan. Anda membuka tab <strong>Peralatan</strong>, menyaring berdasarkan kategori dan tahun, lalu menemukan dozer Case 1650M tahun 2015 di Mackay, QLD seharga $62.000. Anda klik <strong>Kirim Pesan</strong> dan menanyakan kondisi undercarriage serta kemungkinan inspeksi. Penjual membalas di tab <strong>Pesan</strong>. Anda menegosiasikan detail langsung dengannya — Yardline menghubungkan Anda berdua, transaksinya sendiri terjadi antara Anda dan penjual.</p>
+        </div>
+
+        <div class="guide-dodont">
+          <div class="guide-dos">
+            <h4>Yang Sebaiknya Dilakukan</h4>
+            <ul>
+              <li>Gunakan nama perusahaan asli dan email bisnis saat mendaftar — ini membangun kepercayaan penjual.</li>
+              <li>Periksa tab Peralatan secara berkala; peralatan baru sering ditambahkan.</li>
+              <li>Ajukan pertanyaan spesifik pada pesan pertama (tahun, jam kerja, kondisi, fleksibilitas harga, ketersediaan inspeksi).</li>
+              <li>Jaga kerahasiaan kata sandi Anda dan keluar (logout) di komputer bersama atau publik.</li>
+            </ul>
+          </div>
+          <div class="guide-donts">
+            <h4>Yang Sebaiknya Dihindari</h4>
+            <ul>
+              <li>Jangan membagikan kredensial login Anda kepada siapa pun.</li>
+              <li>Jangan berharap bisa menjelajah atau mengirim pesan jika admin belum mengaktifkan mode pasar terbuka.</li>
+              <li>Jangan mengirim pesan generik yang sama ke banyak penjual — pertanyaan spesifik mendapat jawaban lebih baik.</li>
+              <li>Jangan berasumsi pembeli lain bisa melihat percakapan Anda — percakapan bersifat pribadi antara Anda dan penjual.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LISTINGS TAB -->
+    <div class="tab-panel" id="panel-listings" role="tabpanel" data-panel="listings" aria-labelledby="tab-listings">
+      <div class="panel-header">
+        <h1 data-i18n="buyer.listings.title">Browse Listings</h1>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th data-i18n="buyer.listings.equipment">Equipment</th>
+              <th data-i18n="buyer.listings.year">Year</th>
+              <th data-i18n="buyer.listings.hours">Hours</th>
+              <th data-i18n="buyer.listings.condition">Condition</th>
+              <th data-i18n="buyer.listings.price">Price</th>
+              <th data-i18n="buyer.listings.location">Location</th>
+              <th data-i18n="buyer.listings.seller">Seller</th>
+              <th data-i18n="buyer.listings.actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="listings-body">
+            <tr><td colspan="8" style="text-align:center; color: var(--color-muted);" data-i18n="buyer.listings.loading">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="empty-state" id="listings-disabled" hidden data-i18n="buyer.listings.disabled">Marketplace browsing isn't enabled yet — check back later.</p>
+    </div>
+
+    <!-- MESSAGES TAB -->
+    <div class="tab-panel is-hidden" id="panel-messages" role="tabpanel" data-panel="messages" aria-labelledby="tab-messages">
+      <div class="panel-header">
+        <h1 data-i18n="buyer.messages.title">Messages</h1>
+      </div>
+      <div class="messages-layout">
+        <div class="conversations-list" id="conversations-list">
+          <p class="empty-state" data-i18n="buyer.messages.loading">Loading...</p>
+        </div>
+        <div class="thread-panel">
+          <div class="thread-panel__header" id="thread-header" data-i18n="buyer.messages.selectConversation">Select a conversation</div>
+          <div class="thread-messages" id="thread-messages"></div>
+          <form class="thread-compose" id="thread-compose" hidden>
+            <textarea class="input" id="thread-input" data-i18n-placeholder="buyer.messages.placeholder" placeholder="Write a message..." required></textarea>
+            <button class="btn btn--accent" type="submit" data-i18n="buyer.messages.send">Send</button>
+          </form>
+        </div>
+      </div>
+      <p class="empty-state" id="messages-disabled" hidden data-i18n="buyer.messages.disabled">Messaging is currently disabled by the marketplace administrator.</p>
+    </div>
+  </main>
+</div>
+
+<script>
+(function() {
+  "use strict";
+
+  const $ = (sel) => document.querySelector(sel);
+  const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+
+  async function api(path, opts) {
+    const res = await fetch("/api" + path, Object.assign({ credentials: "include" }, opts, {
+      headers: Object.assign({ "Content-Type": "application/json" }, (opts && opts.headers) || {})
+    }));
+    const text = await res.text();
+    const data = text ? JSON.parse(text) : null;
+    if (!res.ok) {
+      const err = new Error((data && data.error) || "Request failed");
+      err.status = res.status;
+      throw err;
+    }
+    return data;
+  }
+
+  function toast(msg, type) {
+    const el = document.createElement("div");
+    el.className = "toast" + (type === "error" ? " toast--error" : "");
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2600);
+  }
+
+  let me = null;
+  let activeThread = null; // { listingId, otherAccountId, label }
+
+  function showTab(tabName) {
+    $$("[role='tab']").forEach(t => t.setAttribute("aria-selected", "false"));
+    $$(".tab-panel").forEach(p => p.classList.add("is-hidden"));
+    const tab = $(`[data-tab='${tabName}']`);
+    const panel = $(`[data-panel='${tabName}']`);
+    if (tab && panel) {
+      tab.setAttribute("aria-selected", "true");
+      panel.classList.remove("is-hidden");
+    }
+  }
+
+  async function loadListings() {
+    const tbody = $("#listings-body");
+    const disabledEl = $("#listings-disabled");
+    try {
+      const listings = await api("/listings/browse");
+      disabledEl.hidden = true;
+      if (!listings || listings.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color: var(--color-muted);" data-i18n="buyer.listings.noListings">No listings available right now</td></tr>`;
+        applyLang();
+        return;
+      }
+      tbody.innerHTML = listings.map(l => {
+        const equipment = `${l.brand || ""} ${l.model || ""}`.trim() || (l.category || "Equipment");
+        const price = l.price ? `${l.price} ${l.currency}` : "—";
+        const location = [l.city, l.region].filter(Boolean).join(", ") || "—";
+        return `
+          <tr data-listing-id="${l.id}" data-seller-id="${l.account_id}">
+            <td>${equipment}</td>
+            <td>${l.year || "—"}</td>
+            <td>${l.hours_or_mileage || "—"}</td>
+            <td>${l.condition || "—"}</td>
+            <td>${price}</td>
+            <td>${location}</td>
+            <td>#${l.account_id}</td>
+            <td><button class="btn btn--sm" data-action="message-seller" data-listing-id="${l.id}" data-seller-id="${l.account_id}" data-label="${equipment.replace(/"/g, '&quot;')}" data-i18n="buyer.listings.messageSeller">Message seller</button></td>
+          </tr>
+        `;
+      }).join("");
+    } catch (err) {
+      tbody.innerHTML = "";
+      if (err.status === 403) {
+        disabledEl.hidden = false;
+      } else {
+        toast(err.message || "Failed to load listings", "error");
+      }
+    }
+  }
+
+  async function loadConversations() {
+    const listEl = $("#conversations-list");
+    const disabledEl = $("#messages-disabled");
+    try {
+      const conversations = await api("/messages/conversations");
+      disabledEl.hidden = true;
+      if (!conversations || conversations.length === 0) {
+        listEl.innerHTML = `<p class="empty-state" data-i18n="buyer.messages.noConversations">No conversations yet</p>`;
+        applyLang();
+        return;
+      }
+      listEl.innerHTML = conversations.map(c => {
+        const label = `${c.listing_brand || ""} ${c.listing_model || ""}`.trim() || (c.listing_category || "Listing");
+        return `
+          <button type="button" class="conversation-item" data-listing-id="${c.listing_id}" data-other-id="${c.counterpart_account_id}" data-label="${label.replace(/"/g, '&quot;')}">
+            <div class="conversation-item__title">${c.counterpart_company || "Seller"}</div>
+            <div class="conversation-item__meta">${label}</div>
+          </button>
+        `;
+      }).join("");
+    } catch (err) {
+      toast(err.message || "Failed to load conversations", "error");
+    }
+  }
+
+  async function openThread(listingId, otherAccountId, label) {
+    activeThread = { listingId, otherAccountId, label };
+    showTab("messages");
+    $$(".conversation-item").forEach(el => {
+      el.classList.toggle("is-active", Number(el.dataset.listingId) === listingId && Number(el.dataset.otherId) === otherAccountId);
+    });
+    $("#thread-header").textContent = label;
+    $("#thread-compose").hidden = false;
+    await loadThreadMessages();
+  }
+
+  async function loadThreadMessages() {
+    if (!activeThread) return;
+    const box = $("#thread-messages");
+    try {
+      const messages = await api(`/messages/${activeThread.listingId}/${activeThread.otherAccountId}`);
+      if (!messages || messages.length === 0) {
+        box.innerHTML = `<p class="empty-state" data-i18n="buyer.messages.noMessages">No messages yet — say hello.</p>`;
+        applyLang();
+        return;
+      }
+      box.innerHTML = messages.map(m => {
+        const mine = me && m.sender_account_id === me.id;
+        const time = new Date(m.created_at).toLocaleString();
+        return `
+          <div class="thread-message${mine ? " is-mine" : ""}">
+            ${escapeHtml(m.body)}
+            <span class="thread-message__time">${time}</span>
+          </div>
+        `;
+      }).join("");
+      box.scrollTop = box.scrollHeight;
+    } catch (err) {
+      toast(err.message || "Failed to load conversation", "error");
+    }
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  document.addEventListener("click", async (e) => {
+    const tab = e.target.closest("[role='tab']");
+    if (tab) {
+      showTab(tab.dataset.tab);
+      return;
+    }
+
+    if (e.target.id === "logout-btn") {
+      try {
+        await api("/auth/logout", { method: "POST" });
+        window.location.href = "/login";
+      } catch (err) {
+        toast(err.message || "Logout failed", "error");
+      }
+      return;
+    }
+
+    const msgBtn = e.target.closest("[data-action='message-seller']");
+    if (msgBtn) {
+      openThread(Number(msgBtn.dataset.listingId), Number(msgBtn.dataset.sellerId), msgBtn.dataset.label);
+      return;
+    }
+
+    const convItem = e.target.closest(".conversation-item");
+    if (convItem) {
+      openThread(Number(convItem.dataset.listingId), Number(convItem.dataset.otherId), convItem.dataset.label);
+      return;
+    }
+  });
+
+  $("#thread-compose").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!activeThread) return;
+    const input = $("#thread-input");
+    const body = input.value.trim();
+    if (!body) return;
+    try {
+      await api("/messages", {
+        method: "POST",
+        body: JSON.stringify({ listing_id: activeThread.listingId, body })
+      });
+      input.value = "";
+      await loadThreadMessages();
+      await loadConversations();
+    } catch (err) {
+      if (err.status === 403) {
+        $("#thread-compose").hidden = true;
+        $("#messages-disabled").hidden = false;
+      }
+      toast(err.message || "Failed to send message", "error");
+    }
+  });
+
+  // i18n
+  const idText = {
+    "buyer.meta.title": "Dasbor Pembeli - Yardline",
+    "buyer.nav.guide": "Panduan",
+    "buyer.guide.title": "Panduan Pembeli",
+    "buyer.nav.listings": "Peralatan",
+    "buyer.nav.messages": "Pesan",
+    "buyer.logout": "Keluar",
+    "buyer.listings.title": "Jelajahi Peralatan",
+    "buyer.listings.equipment": "Peralatan",
+    "buyer.listings.year": "Tahun",
+    "buyer.listings.hours": "Jam Kerja",
+    "buyer.listings.condition": "Kondisi",
+    "buyer.listings.price": "Harga",
+    "buyer.listings.location": "Lokasi",
+    "buyer.listings.seller": "Penjual",
+    "buyer.listings.actions": "Aksi",
+    "buyer.listings.loading": "Memuat...",
+    "buyer.listings.noListings": "Belum ada peralatan tersedia",
+    "buyer.listings.messageSeller": "Kirim Pesan",
+    "buyer.listings.disabled": "Jelajah pasar belum diaktifkan — coba lagi nanti.",
+    "buyer.messages.title": "Pesan",
+    "buyer.messages.loading": "Memuat...",
+    "buyer.messages.selectConversation": "Pilih percakapan",
+    "buyer.messages.noConversations": "Belum ada percakapan",
+    "buyer.messages.noMessages": "Belum ada pesan — sapa dulu.",
+    "buyer.messages.send": "Kirim",
+    "buyer.messages.disabled": "Pesan saat ini dinonaktifkan oleh admin pasar.",
+    "buyer.messages.placeholder": "Tulis pesan..."
+  };
+
+  const i18nEls = $$("[data-i18n]");
+  const enText = {};
+  i18nEls.forEach(el => {
+    const key = el.dataset.i18n;
+    enText[key] = el.tagName === "TITLE" ? el.textContent : el.innerHTML;
+  });
+  const i18nPlaceholderEls = $$("[data-i18n-placeholder]");
+  const enPlaceholders = {};
+  i18nPlaceholderEls.forEach(el => {
+    enPlaceholders[el.dataset.i18nPlaceholder] = el.getAttribute("placeholder");
+  });
+
+  let currentDict = enText;
+  let currentLang = "en";
+  const langBlockEls = $$("[data-lang-block]");
+
+  function t(key) {
+    return currentDict[key] || enText[key] || key;
+  }
+
+  function applyLang() {
+    i18nEls.forEach(el => {
+      const key = el.dataset.i18n;
+      const value = currentDict[key] || enText[key];
+      if (value === undefined) return;
+      if (el.tagName === "TITLE") el.textContent = value;
+      else el.innerHTML = value;
+    });
+    i18nPlaceholderEls.forEach(el => {
+      const key = el.dataset.i18nPlaceholder;
+      const value = currentLang === "id" ? (idText[key] || enPlaceholders[key]) : enPlaceholders[key];
+      if (value !== undefined) el.setAttribute("placeholder", value);
+    });
+  }
+
+  function applyLangBlocks() {
+    langBlockEls.forEach(el => { el.hidden = el.dataset.langBlock !== currentLang; });
+  }
+
+  function setLang(lang) {
+    currentLang = lang;
+    currentDict = lang === "id" ? Object.assign({}, enText, idText) : enText;
+    applyLang();
+    applyLangBlocks();
+    document.documentElement.lang = lang;
+    $$("[data-lang-btn]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.langBtn === lang)));
+    try { localStorage.setItem("yardline-lang", lang); } catch (e) {}
+  }
+
+  $$("[data-lang-btn]").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      setLang(btn.dataset.langBtn);
+    });
+  });
+
+  let savedLang = null;
+  try { savedLang = localStorage.getItem("yardline-lang"); } catch (e) {}
+  if (savedLang === "id") setLang("id");
+
+  async function boot() {
+    try {
+      me = await api("/auth/me");
+    } catch (err) {
+      if (err.status === 401) { window.location.href = "/login"; return; }
+      toast(err.message || "Failed to load account", "error");
+      return;
+    }
+    if (me.role !== "buyer") {
+      window.location.href = "/";
+      return;
+    }
+    $("#user-name").textContent = me.company_name;
+    showTab("listings");
+    await Promise.all([loadListings(), loadConversations()]);
+  }
+
+  boot();
+})();
+</script>
+
+</body>
+</html>

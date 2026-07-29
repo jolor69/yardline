@@ -124,3 +124,13 @@ export interface MatchFeatures {
   seller_verified: boolean;
   listing_freshness_days: number;
 }
+
+export interface MessageRow {
+  id: number;
+  listing_id: number;
+  buyer_account_id: number;
+  seller_account_id: number;
+  sender_account_id: number;
+  body: string;
+  created_at: string;
+}

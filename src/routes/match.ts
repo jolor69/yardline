@@ -1,6 +1,12 @@
 import { Hono } from "hono";
 import { requireAuth, requireRole } from "../lib/auth";
-import { getAccount, getCriteria, insertMatch, listActiveListingsByCategory } from "../lib/db";
+import {
+  getAccount,
+  getCriteria,
+  insertMatch,
+  listActiveCriteria,
+  listActiveListingsByCategory,
+} from "../lib/db";
 import { computeFeatures, criteriaFitScore, hardFilter } from "../lib/matching";
 import type { Account, BuyerCriteria, Env, Listing } from "../lib/types";
 
@@ -39,6 +45,37 @@ app.get("/", requireAuth, requireRole("admin"), async (c) => {
     // not a calibrated probability. See docs/ai-matching-spec.md §5.
     label: "criteria_fit_score",
     results: scored,
+  });
+});
+
+// Admin-only. Runs the same pipeline as GET / above, but for every active
+// buyer criteria at once — this backs the "Run Matching" button in the
+// admin panel so admin doesn't need to know individual criteria IDs.
+// Safe to click repeatedly: it just logs additional match rows each time
+// (e.g. to re-score against newly added listings), it doesn't dedupe
+// against matches already logged for the same pair.
+app.post("/run-all", requireAuth, requireRole("admin"), async (c) => {
+  const criteriaList = await listActiveCriteria(c.env);
+
+  let matchesCreated = 0;
+  const perCriteria: Array<{ criteria_id: number; matches_created: number }> = [];
+
+  for (const criteria of criteriaList) {
+    const buyerAccount = await getAccount(c.env, criteria.account_id);
+    if (!buyerAccount) continue;
+
+    const candidateListings = await listActiveListingsByCategory(c.env, criteria.category);
+    const eligible = hardFilter(candidateListings, criteria, buyerAccount);
+    const scored = await scoreAndLog(c.env, eligible, criteria, buyerAccount);
+
+    matchesCreated += scored.length;
+    perCriteria.push({ criteria_id: criteria.id, matches_created: scored.length });
+  }
+
+  return c.json({
+    criteria_processed: criteriaList.length,
+    matches_created: matchesCreated,
+    results: perCriteria,
   });
 });
 

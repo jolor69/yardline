@@ -9,6 +9,7 @@ import {
   getPhoto,
   hasApprovedMatchForBuyerAndListing,
   insertPhoto,
+  isOpenModeEnabled,
   listPhotosForListing,
   setPrimaryPhoto,
 } from "../lib/db";
@@ -161,6 +162,15 @@ photoServe.get("/:id", requireAuth, async (c) => {
   let allowed = isOwner || actor.role === "admin";
   if (!allowed && actor.role === "buyer" && photo.is_primary) {
     allowed = await hasApprovedMatchForBuyerAndListing(c.env, actor.id, listing.id);
+  }
+  const isLive = listing.active === 1 && listing.extraction_status === "ok";
+  if (
+    !allowed &&
+    photo.is_primary &&
+    isLive &&
+    (actor.role === "buyer" || actor.role === "seller")
+  ) {
+    allowed = await isOpenModeEnabled(c.env);
   }
   if (!allowed) return c.json({ error: "Photo not found" }, 404); // don't reveal existence
 

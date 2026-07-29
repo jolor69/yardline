@@ -4,8 +4,11 @@ import { requireAuth, requireRole } from "../lib/auth";
 import {
   approveMatch,
   getAccount,
+  getListing,
   getSetting,
+  getThreadMessages,
   listAccounts,
+  listAllConversations,
   listAllListings,
   listApprovedMatches,
   listPendingMatches,
@@ -137,6 +140,61 @@ app.patch("/settings/default-max-photos", async (c) => {
   }
   await setSetting(c.env, "default_max_photos", String(body.data.default_max_photos));
   return c.json({ default_max_photos: body.data.default_max_photos });
+});
+
+app.get("/settings/open-mode", async (c) => {
+  const value = await getSetting(c.env, "open_mode_enabled");
+  return c.json({ open_mode_enabled: value === "1" });
+});
+
+const openModeSchema = z.object({ open_mode_enabled: z.boolean() });
+
+app.patch("/settings/open-mode", async (c) => {
+  const body = openModeSchema.safeParse(await safeJson(c));
+  if (!body.success) {
+    return c.json({ error: "Invalid payload", details: body.error.issues }, 400);
+  }
+  await setSetting(c.env, "open_mode_enabled", body.data.open_mode_enabled ? "1" : "0");
+  return c.json({ open_mode_enabled: body.data.open_mode_enabled });
+});
+
+// ---------------------------------------------------------------------
+// Messages — admin oversight of every buyer<->seller conversation.
+// Always available regardless of the open-mode toggle: admin's ability
+// to review conversations isn't something the toggle should gate.
+// ---------------------------------------------------------------------
+
+app.get("/messages/conversations", async (c) => {
+  const conversations = await listAllConversations(c.env);
+  const enriched = await Promise.all(
+    conversations.map(async (conv) => {
+      const [listing, buyer, seller] = await Promise.all([
+        getListing(c.env, conv.listing_id),
+        getAccount(c.env, conv.buyer_account_id),
+        getAccount(c.env, conv.seller_account_id),
+      ]);
+      return {
+        ...conv,
+        listing_category: listing?.category ?? null,
+        listing_brand: listing?.brand ?? null,
+        listing_model: listing?.model ?? null,
+        buyer_company: buyer?.company_name ?? null,
+        seller_company: seller?.company_name ?? null,
+      };
+    }),
+  );
+  return c.json(enriched);
+});
+
+app.get("/messages/:listingId/:buyerAccountId/:sellerAccountId", async (c) => {
+  const listingId = Number(c.req.param("listingId"));
+  const buyerAccountId = Number(c.req.param("buyerAccountId"));
+  const sellerAccountId = Number(c.req.param("sellerAccountId"));
+  if (![listingId, buyerAccountId, sellerAccountId].every(Number.isInteger)) {
+    return c.json({ error: "Invalid id" }, 400);
+  }
+  const messages = await getThreadMessages(c.env, listingId, buyerAccountId, sellerAccountId);
+  return c.json(messages);
 });
 
 export default app;

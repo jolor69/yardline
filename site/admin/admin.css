@@ -279,3 +279,58 @@ tbody tr:hover { background: var(--color-paper-2); }
   .tabs { padding-inline: var(--space-md); overflow-x: auto; }
   .tab { white-space: nowrap; }
 }
+
+/* Guide / manual */
+.guide-section { margin-bottom: var(--space-xl); }
+.guide-section:last-child { margin-bottom: 0; }
+.guide-section h3 { font-size: var(--text-base); margin-top: 0; }
+.guide-section ol, .guide-section ul { padding-left: 1.25em; }
+.guide-section li { margin-bottom: var(--space-2xs); }
+.guide-example {
+  background: var(--color-paper-3);
+  border-left: 3px solid var(--color-accent);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-card);
+  margin: var(--space-md) 0;
+  font-size: var(--text-sm);
+}
+.guide-example strong { color: var(--color-ink); }
+.guide-dodont {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--space-lg);
+  margin-top: var(--space-md);
+}
+.guide-dos, .guide-donts {
+  border-radius: var(--radius-card);
+  padding: var(--space-lg);
+  border: 1px solid var(--color-rule);
+}
+.guide-dos { border-color: var(--color-success); background: rgba(12, 110, 84, 0.05); }
+.guide-donts { border-color: var(--color-error); background: rgba(255, 75, 75, 0.05); }
+.guide-dos h4, .guide-donts h4 { margin-top: 0; margin-bottom: var(--space-sm); }
+.guide-dos ul, .guide-donts ul { margin: 0; padding-left: 1.2em; }
+.guide-dos li, .guide-donts li { margin-bottom: var(--space-2xs); font-size: var(--text-sm); }
+
+/* Lang toggle (scoped to the Guide panel only — rest of admin UI is EN-only) */
+.lang-toggle {
+  display: inline-flex;
+  border: 1px solid var(--color-rule-2);
+  border-radius: var(--radius-pill);
+  padding: 2px;
+  gap: 2px;
+}
+.lang-btn {
+  border: none;
+  background: transparent;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  padding: var(--space-2xs) var(--space-xs);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+}
+.lang-btn[aria-pressed="true"] { background: var(--color-paper-2); color: var(--color-ink); }

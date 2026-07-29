@@ -5,6 +5,7 @@ import type {
   Listing,
   ListingPhoto,
   MatchRow,
+  MessageRow,
   PasswordResetToken,
   PublicAccount,
   Session,
@@ -343,6 +344,12 @@ export async function getCriteria(env: Env, id: number): Promise<BuyerCriteria |
     .first<BuyerCriteria>();
 }
 
+export async function listActiveCriteria(env: Env): Promise<BuyerCriteria[]> {
+  const { results } = await env.DB.prepare("SELECT * FROM buyer_criteria WHERE active = 1")
+    .all<BuyerCriteria>();
+  return results;
+}
+
 export async function insertMatch(
   env: Env,
   input: Omit<
@@ -669,4 +676,116 @@ export async function effectiveMaxPhotos(env: Env, seller: Account): Promise<num
   if (seller.max_photos_override !== null) return seller.max_photos_override;
   const value = await getSetting(env, "default_max_photos");
   return Number(value ?? 10);
+}
+
+// ---------------------------------------------------------------------
+// Open mode — admin toggle that lets buyers/sellers browse all live
+// listings directly and message each other, bypassing the admin-mediated
+// matches/approval flow. See migrations/0004_open_mode_and_messages.sql.
+// ---------------------------------------------------------------------
+
+export async function isOpenModeEnabled(env: Env): Promise<boolean> {
+  return (await getSetting(env, "open_mode_enabled")) === "1";
+}
+
+export async function listBrowsableListings(env: Env): Promise<Listing[]> {
+  const { results } = await env.DB.prepare(
+    `SELECT * FROM listings WHERE active = 1 AND extraction_status = 'ok' ORDER BY id DESC`,
+  ).all<Listing>();
+  return results;
+}
+
+// ---------------------------------------------------------------------
+// Messages — direct buyer<->seller conversations scoped to a listing.
+// No separate conversations table: (listing_id, buyer_account_id,
+// seller_account_id) is a stable natural key for a thread.
+// ---------------------------------------------------------------------
+
+export async function insertMessage(
+  env: Env,
+  input: Pick<
+    MessageRow,
+    "listing_id" | "buyer_account_id" | "seller_account_id" | "sender_account_id" | "body"
+  >,
+): Promise<MessageRow> {
+  const row = await env.DB.prepare(
+    `INSERT INTO messages (listing_id, buyer_account_id, seller_account_id, sender_account_id, body)
+     VALUES (?, ?, ?, ?, ?)
+     RETURNING *`,
+  )
+    .bind(
+      input.listing_id,
+      input.buyer_account_id,
+      input.seller_account_id,
+      input.sender_account_id,
+      input.body,
+    )
+    .first<MessageRow>();
+  if (!row) throw new Error("Failed to insert message");
+  return row;
+}
+
+export async function getThreadMessages(
+  env: Env,
+  listingId: number,
+  buyerAccountId: number,
+  sellerAccountId: number,
+): Promise<MessageRow[]> {
+  const { results } = await env.DB.prepare(
+    `SELECT * FROM messages
+     WHERE listing_id = ? AND buyer_account_id = ? AND seller_account_id = ?
+     ORDER BY id`,
+  )
+    .bind(listingId, buyerAccountId, sellerAccountId)
+    .all<MessageRow>();
+  return results;
+}
+
+export async function threadExists(
+  env: Env,
+  listingId: number,
+  buyerAccountId: number,
+  sellerAccountId: number,
+): Promise<boolean> {
+  const row = await env.DB.prepare(
+    `SELECT 1 FROM messages
+     WHERE listing_id = ? AND buyer_account_id = ? AND seller_account_id = ?
+     LIMIT 1`,
+  )
+    .bind(listingId, buyerAccountId, sellerAccountId)
+    .first();
+  return row !== null;
+}
+
+export interface ConversationKey {
+  listing_id: number;
+  buyer_account_id: number;
+  seller_account_id: number;
+  last_message_at: string;
+}
+
+export async function listConversationsForAccount(
+  env: Env,
+  accountId: number,
+): Promise<ConversationKey[]> {
+  const { results } = await env.DB.prepare(
+    `SELECT listing_id, buyer_account_id, seller_account_id, MAX(created_at) AS last_message_at
+     FROM messages
+     WHERE buyer_account_id = ? OR seller_account_id = ?
+     GROUP BY listing_id, buyer_account_id, seller_account_id
+     ORDER BY last_message_at DESC`,
+  )
+    .bind(accountId, accountId)
+    .all<ConversationKey>();
+  return results;
+}
+
+export async function listAllConversations(env: Env): Promise<ConversationKey[]> {
+  const { results } = await env.DB.prepare(
+    `SELECT listing_id, buyer_account_id, seller_account_id, MAX(created_at) AS last_message_at
+     FROM messages
+     GROUP BY listing_id, buyer_account_id, seller_account_id
+     ORDER BY last_message_at DESC`,
+  ).all<ConversationKey>();
+  return results;
 }

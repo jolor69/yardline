@@ -8,6 +8,7 @@ import criteria from "./routes/criteria";
 import listings from "./routes/listings";
 import match from "./routes/match";
 import matchesMine from "./routes/matches-mine";
+import messages from "./routes/messages";
 import outcomes from "./routes/outcomes";
 import { listingPhotos, photoServe } from "./routes/photos";
 import type { Env } from "./lib/types";
@@ -41,6 +42,7 @@ api.route("/match", match);
 api.route("/matches", outcomes);
 api.route("/matches", matchesMine);
 api.route("/photos", photoServe);
+api.route("/messages", messages);
 api.route("/admin", admin);
 
 app.route("/api", api);

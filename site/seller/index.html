@@ -29,14 +29,150 @@
 
   <div class="tabs-container">
     <div class="tabs" role="tablist" aria-label="Dashboard navigation">
+      <button class="tab" role="tab" data-tab="guide" aria-selected="false" aria-controls="panel-guide" data-i18n="seller.nav.guide">Guide</button>
       <button class="tab" role="tab" data-tab="dashboard" aria-selected="true" aria-controls="panel-dashboard" data-i18n="seller.nav.dashboard">Dashboard</button>
       <button class="tab" role="tab" data-tab="listings" aria-selected="false" aria-controls="panel-listings" data-i18n="seller.nav.listings">My Listings</button>
       <button class="tab" role="tab" data-tab="matches" aria-selected="false" aria-controls="panel-matches" data-i18n="seller.nav.matches">Matches</button>
+      <button class="tab" role="tab" data-tab="marketplace" aria-selected="false" aria-controls="panel-marketplace" data-i18n="seller.nav.marketplace">Marketplace</button>
+      <button class="tab" role="tab" data-tab="messages" aria-selected="false" aria-controls="panel-messages" data-i18n="seller.nav.messages">Messages</button>
       <button class="tab" role="tab" data-tab="settings" aria-selected="false" aria-controls="panel-settings" data-i18n="seller.nav.settings">Settings</button>
     </div>
   </div>
 
   <main class="main-content">
+    <!-- GUIDE TAB -->
+    <div class="tab-panel is-hidden" id="panel-guide" role="tabpanel" data-panel="guide" aria-labelledby="tab-guide">
+      <div class="panel-header">
+        <h1 data-i18n="seller.guide.title">Seller Guide</h1>
+      </div>
+
+      <!-- English -->
+      <div data-lang-block="en">
+        <div class="card guide-section">
+          <h3>1. Creating your account &amp; logging in</h3>
+          <ol>
+            <li>Go to <strong>/get-started</strong> and choose <strong>"I'm a seller."</strong></li>
+            <li>Fill in your company name, a valid email address, and a password (at least 8 characters). Add phone and location if you have them — buyers see these once a conversation or an approved match reveals your contact details.</li>
+            <li>Submit the form — you're logged in immediately and taken straight to this dashboard.</li>
+            <li>Next time, go to <strong>/login</strong>. Use <strong>"Reset Password"</strong> in Settings if you forget it.</li>
+          </ol>
+        </div>
+
+        <div class="card guide-section">
+          <h3>2. Verification &amp; self-listing</h3>
+          <p>New accounts start with verification status <strong>"pending."</strong> Yardline admin reviews and verifies real businesses. Also, before you can post listings yourself, an admin needs to grant you <strong>self-listing</strong> permission (a one-time toggle on your account). Until then, ask Yardline admin to list equipment on your behalf using the same description you'd otherwise submit yourself.</p>
+        </div>
+
+        <div class="card guide-section">
+          <h3>3. Creating a listing</h3>
+          <ol>
+            <li>Open <strong>My Listings</strong> and click <strong>"Create Listing."</strong></li>
+            <li>Write a free-text description of the equipment — brand, model, year, hours or mileage, condition, price, and location. Our system automatically extracts these into structured fields.</li>
+            <li>Review the extracted fields carefully. If anything is wrong or marked <strong>"Needs Review,"</strong> correct it before confirming — a bad extraction won't get fixed on its own.</li>
+            <li>Confirm the listing to make it live.</li>
+            <li>Upload photos from the listing's detail view. There's a limit on how many photos you can attach per listing (shown in Settings) — mark your best, most representative shot as <strong>primary</strong>, since that's the one buyers see first.</li>
+          </ol>
+          <div class="guide-example"><strong>Example description:</strong> "2019 Komatsu PC200 excavator, 4,000 hours, good condition, always shedded. Quick hitch fitted. Asking 800,000,000 IDR. Located in Jakarta."</div>
+        </div>
+
+        <div class="card guide-section">
+          <h3>4. Matches (admin-curated introductions)</h3>
+          <p>Separately from open browsing, Yardline's admin team can match your listings against buyer requirements behind the scenes. Once an admin approves a match, it appears in your <strong>Matches</strong> tab with the buyer's contact details and a fit score. Report the outcome (contacted, sale closed, no result) so Yardline can keep improving matches.</p>
+        </div>
+
+        <div class="card guide-section">
+          <h3>5. Marketplace &amp; Messages</h3>
+          <p>When Yardline admin turns on <strong>open marketplace mode</strong>, the <strong>Marketplace</strong> tab shows every other seller's live listings too (not your own) — useful for gauging competitor pricing. Buyers browsing the same catalog can message you about your listings; those conversations land in your <strong>Messages</strong> tab. You can reply to any buyer who's messaged you, but — to prevent unsolicited outreach — you can't start a new conversation with a buyer who hasn't contacted you first.</p>
+        </div>
+
+        <div class="guide-dodont">
+          <div class="guide-dos">
+            <h4>Do's</h4>
+            <ul>
+              <li>Write detailed, accurate descriptions — brand, model, year, hours, condition, price, and location all improve extraction accuracy and buyer trust.</li>
+              <li>Upload clear, well-lit photos and set the most representative one as primary.</li>
+              <li>Reply to buyer messages promptly — faster responses close more deals.</li>
+              <li>Keep listings current — deactivate or update ones that have sold or changed price.</li>
+              <li>Double-check any listing marked "Needs Review" before it goes live.</li>
+            </ul>
+          </div>
+          <div class="guide-donts">
+            <h4>Don'ts</h4>
+            <ul>
+              <li>Don't leave a draft unconfirmed — it won't appear to buyers until you confirm it.</li>
+              <li>Don't exceed your photo limit per listing (check Settings for your current cap).</li>
+              <li>Don't expect to message a buyer who hasn't messaged you first — that's blocked by design.</li>
+              <li>Don't share a buyer's contact details with anyone outside your own company.</li>
+              <li>Don't share your login credentials with anyone else.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Indonesian -->
+      <div data-lang-block="id" hidden>
+        <div class="card guide-section">
+          <h3>1. Membuat akun &amp; masuk</h3>
+          <ol>
+            <li>Buka <strong>/get-started</strong> dan pilih <strong>"Saya penjual."</strong></li>
+            <li>Isi nama perusahaan, alamat email yang valid, dan kata sandi (minimal 8 karakter). Tambahkan nomor telepon dan lokasi jika ada — pembeli akan melihatnya setelah percakapan dimulai atau setelah kecocokan (match) disetujui.</li>
+            <li>Kirim formulir — Anda langsung masuk dan diarahkan ke dasbor ini.</li>
+            <li>Selanjutnya, buka <strong>/login</strong>. Gunakan <strong>"Atur Ulang Kata Sandi"</strong> di Pengaturan jika Anda lupa.</li>
+          </ol>
+        </div>
+
+        <div class="card guide-section">
+          <h3>2. Verifikasi &amp; izin memasang peralatan sendiri</h3>
+          <p>Akun baru dimulai dengan status verifikasi <strong>"tertunda."</strong> Admin Yardline akan meninjau dan memverifikasi bisnis yang sah. Selain itu, sebelum Anda bisa memasang peralatan sendiri, admin perlu memberikan izin <strong>self-listing</strong> pada akun Anda (pengaturan satu kali). Sebelum izin diberikan, minta admin Yardline untuk memasang peralatan atas nama Anda menggunakan deskripsi yang sama seperti yang akan Anda kirim sendiri.</p>
+        </div>
+
+        <div class="card guide-section">
+          <h3>3. Membuat listing</h3>
+          <ol>
+            <li>Buka <strong>Peralatan Saya</strong> dan klik <strong>"Buat Peralatan."</strong></li>
+            <li>Tulis deskripsi bebas tentang peralatan — merek, model, tahun, jam kerja atau kilometer, kondisi, harga, dan lokasi. Sistem kami otomatis mengekstrak ini menjadi kolom terstruktur.</li>
+            <li>Periksa kembali kolom hasil ekstraksi dengan teliti. Jika ada yang salah atau ditandai <strong>"Perlu Ditinjau,"</strong> perbaiki sebelum konfirmasi — hasil ekstraksi yang keliru tidak akan diperbaiki sendiri.</li>
+            <li>Konfirmasi listing agar aktif dan terlihat oleh pembeli.</li>
+            <li>Unggah foto dari halaman detail listing. Ada batas jumlah foto per listing (lihat di Pengaturan) — tandai foto terbaik dan paling representatif sebagai <strong>utama</strong>, karena itulah yang pertama kali dilihat pembeli.</li>
+          </ol>
+          <div class="guide-example"><strong>Contoh deskripsi:</strong> "Excavator Komatsu PC200 tahun 2019, 4.000 jam kerja, kondisi bagus, selalu disimpan di gudang. Sudah quick hitch. Harga 800.000.000 IDR. Berlokasi di Jakarta."</div>
+        </div>
+
+        <div class="card guide-section">
+          <h3>4. Kecocokan (Matches) yang dikurasi admin</h3>
+          <p>Terpisah dari penjelajahan terbuka, tim admin Yardline dapat mencocokkan listing Anda dengan kebutuhan pembeli di balik layar. Setelah admin menyetujui suatu kecocokan, kecocokan itu akan muncul di tab <strong>Kecocokan</strong> Anda beserta detail kontak pembeli dan skor kecocokan. Laporkan hasilnya (dihubungi, penjualan selesai, tidak ada hasil) agar Yardline dapat terus meningkatkan kualitas pencocokan.</p>
+        </div>
+
+        <div class="card guide-section">
+          <h3>5. Pasar &amp; Pesan</h3>
+          <p>Ketika admin Yardline mengaktifkan <strong>mode pasar terbuka</strong>, tab <strong>Pasar</strong> menampilkan listing aktif dari semua penjual lain (bukan milik Anda sendiri) — berguna untuk melihat harga kompetitor. Pembeli yang menjelajahi katalog yang sama dapat mengirim pesan kepada Anda tentang listing Anda; percakapan itu akan muncul di tab <strong>Pesan</strong> Anda. Anda dapat membalas pembeli mana pun yang telah mengirim pesan kepada Anda, tetapi — untuk mencegah pesan yang tidak diminta — Anda tidak dapat memulai percakapan baru dengan pembeli yang belum menghubungi Anda lebih dulu.</p>
+        </div>
+
+        <div class="guide-dodont">
+          <div class="guide-dos">
+            <h4>Yang Sebaiknya Dilakukan</h4>
+            <ul>
+              <li>Tulis deskripsi yang detail dan akurat — merek, model, tahun, jam kerja, kondisi, harga, dan lokasi semuanya meningkatkan akurasi ekstraksi dan kepercayaan pembeli.</li>
+              <li>Unggah foto yang jelas dan pencahayaan baik, lalu tetapkan foto paling representatif sebagai utama.</li>
+              <li>Balas pesan pembeli secepatnya — respons yang lebih cepat menutup lebih banyak transaksi.</li>
+              <li>Jaga listing tetap terkini — nonaktifkan atau perbarui listing yang sudah terjual atau berubah harga.</li>
+              <li>Periksa kembali listing yang ditandai "Perlu Ditinjau" sebelum aktif.</li>
+            </ul>
+          </div>
+          <div class="guide-donts">
+            <h4>Yang Sebaiknya Dihindari</h4>
+            <ul>
+              <li>Jangan biarkan draft belum dikonfirmasi — draft tidak akan terlihat pembeli sampai Anda konfirmasi.</li>
+              <li>Jangan melebihi batas foto per listing (periksa Pengaturan untuk batas Anda saat ini).</li>
+              <li>Jangan berharap bisa mengirim pesan ke pembeli yang belum menghubungi Anda lebih dulu — ini memang dibatasi oleh sistem.</li>
+              <li>Jangan membagikan detail kontak pembeli kepada siapa pun di luar perusahaan Anda.</li>
+              <li>Jangan membagikan kredensial login Anda kepada siapa pun.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- DASHBOARD TAB -->
     <div class="tab-panel" id="panel-dashboard" role="tabpanel" data-panel="dashboard" aria-labelledby="tab-dashboard">
       <div class="panel-header">
@@ -180,6 +316,53 @@
       </div>
     </div>
 
+    <!-- MARKETPLACE TAB -->
+    <div class="tab-panel is-hidden" id="panel-marketplace" role="tabpanel" data-panel="marketplace" aria-labelledby="tab-marketplace">
+      <div class="panel-header">
+        <h1 data-i18n="seller.marketplace.title">Marketplace</h1>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th data-i18n="seller.marketplace.equipment">Equipment</th>
+              <th data-i18n="seller.marketplace.year">Year</th>
+              <th data-i18n="seller.marketplace.hours">Hours</th>
+              <th data-i18n="seller.marketplace.condition">Condition</th>
+              <th data-i18n="seller.marketplace.price">Price</th>
+              <th data-i18n="seller.marketplace.location">Location</th>
+              <th data-i18n="seller.marketplace.seller">Seller</th>
+            </tr>
+          </thead>
+          <tbody id="marketplace-body">
+            <tr><td colspan="7" style="text-align:center; color: var(--color-muted);" data-i18n="seller.marketplace.loading">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="empty-state" id="marketplace-disabled" hidden style="color: var(--color-muted); text-align:center; padding: var(--space-xl);" data-i18n="seller.marketplace.disabled">Marketplace browsing isn't enabled yet — check back later.</p>
+    </div>
+
+    <!-- MESSAGES TAB -->
+    <div class="tab-panel is-hidden" id="panel-messages" role="tabpanel" data-panel="messages" aria-labelledby="tab-messages">
+      <div class="panel-header">
+        <h1 data-i18n="seller.messages.title">Messages</h1>
+      </div>
+      <div class="messages-layout">
+        <div class="conversations-list" id="conversations-list">
+          <p class="empty-state" style="color: var(--color-muted); text-align:center; padding: var(--space-lg);" data-i18n="seller.messages.loading">Loading...</p>
+        </div>
+        <div class="thread-panel">
+          <div class="thread-panel__header" id="thread-header" data-i18n="seller.messages.selectConversation">Select a conversation</div>
+          <div class="thread-messages" id="thread-messages"></div>
+          <form class="thread-compose" id="thread-compose" hidden>
+            <textarea class="input" id="thread-input" placeholder="Write a message..." required></textarea>
+            <button class="btn btn--accent" type="submit" data-i18n="seller.messages.send">Send</button>
+          </form>
+        </div>
+      </div>
+      <p class="empty-state" id="messages-disabled" hidden style="color: var(--color-muted); text-align:center; padding: var(--space-xl);" data-i18n="seller.messages.disabled">Messaging is currently disabled by the marketplace administrator.</p>
+    </div>
+
     <!-- SETTINGS TAB -->
     <div class="tab-panel is-hidden" id="panel-settings" role="tabpanel" data-panel="settings" aria-labelledby="tab-settings">
       <div class="panel-header">
@@ -320,8 +503,119 @@
     try {
       if (tabName === "listings") await loadListings();
       if (tabName === "matches") await loadMatches();
+      if (tabName === "marketplace") await loadMarketplace();
+      if (tabName === "messages") await loadConversations();
     } catch (err) {
       toast(t("seller.error.loadFailed") || "Failed to load data", "error");
+    }
+  }
+
+  let me = null;
+  let activeThread = null; // { listingId, otherAccountId, label }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // Load the open-mode marketplace: every live listing, from every seller.
+  async function loadMarketplace() {
+    const tbody = $("#marketplace-body");
+    const disabledEl = $("#marketplace-disabled");
+    try {
+      const listings = await api("/listings/browse");
+      disabledEl.hidden = true;
+      const others = me ? listings.filter(l => l.account_id !== me.id) : listings;
+      if (!others || others.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--color-muted);" data-i18n="seller.marketplace.noListings">No other listings available right now</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = others.map(l => {
+        const equipment = `${l.brand || ""} ${l.model || ""}`.trim() || (l.category || "Equipment");
+        const price = l.price ? `${l.price} ${l.currency}` : "—";
+        const location = [l.city, l.region].filter(Boolean).join(", ") || "—";
+        return `
+          <tr data-listing-id="${l.id}" data-seller-id="${l.account_id}">
+            <td>${equipment}</td>
+            <td>${l.year || "—"}</td>
+            <td>${l.hours_or_mileage || "—"}</td>
+            <td>${l.condition || "—"}</td>
+            <td>${price}</td>
+            <td>${location}</td>
+            <td>#${l.account_id}
+              <button class="btn btn--sm" data-action="message-seller" data-listing-id="${l.id}" data-seller-id="${l.account_id}" data-label="${equipment.replace(/"/g, '&quot;')}" data-i18n="seller.marketplace.messageSeller" style="margin-left: var(--space-sm);">Message</button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    } catch (err) {
+      tbody.innerHTML = "";
+      if (err.status === 403) {
+        disabledEl.hidden = false;
+      } else {
+        toast(err.message || "Failed to load marketplace", "error");
+      }
+    }
+  }
+
+  async function loadConversations() {
+    const listEl = $("#conversations-list");
+    const disabledEl = $("#messages-disabled");
+    try {
+      const conversations = await api("/messages/conversations");
+      disabledEl.hidden = true;
+      if (!conversations || conversations.length === 0) {
+        listEl.innerHTML = `<p class="empty-state" style="color: var(--color-muted); text-align:center; padding: var(--space-lg);" data-i18n="seller.messages.noConversations">No conversations yet</p>`;
+        return;
+      }
+      listEl.innerHTML = conversations.map(c => {
+        const label = `${c.listing_brand || ""} ${c.listing_model || ""}`.trim() || (c.listing_category || "Listing");
+        return `
+          <button type="button" class="conversation-item" data-listing-id="${c.listing_id}" data-other-id="${c.counterpart_account_id}" data-label="${label.replace(/"/g, '&quot;')}">
+            <div class="conversation-item__title">${c.counterpart_company || "Buyer"}</div>
+            <div class="conversation-item__meta">${label}</div>
+          </button>
+        `;
+      }).join("");
+    } catch (err) {
+      toast(err.message || "Failed to load conversations", "error");
+    }
+  }
+
+  async function openThread(listingId, otherAccountId, label) {
+    activeThread = { listingId, otherAccountId, label };
+    showTab("messages");
+    $$(".conversation-item").forEach(el => {
+      el.classList.toggle("is-active", Number(el.dataset.listingId) === listingId && Number(el.dataset.otherId) === otherAccountId);
+    });
+    $("#thread-header").textContent = label;
+    $("#thread-compose").hidden = false;
+    await loadThreadMessages();
+  }
+
+  async function loadThreadMessages() {
+    if (!activeThread) return;
+    const box = $("#thread-messages");
+    try {
+      const messages = await api(`/messages/${activeThread.listingId}/${activeThread.otherAccountId}`);
+      if (!messages || messages.length === 0) {
+        box.innerHTML = `<p class="empty-state" style="color: var(--color-muted); text-align:center;" data-i18n="seller.messages.noMessages">No messages yet.</p>`;
+        return;
+      }
+      box.innerHTML = messages.map(m => {
+        const mine = me && m.sender_account_id === me.id;
+        const time = new Date(m.created_at).toLocaleString();
+        return `
+          <div class="thread-message${mine ? " is-mine" : ""}">
+            ${escapeHtml(m.body)}
+            <span class="thread-message__time">${time}</span>
+          </div>
+        `;
+      }).join("");
+      box.scrollTop = box.scrollHeight;
+    } catch (err) {
+      toast(err.message || "Failed to load conversation", "error");
     }
   }
 
@@ -447,6 +741,7 @@
         return;
       }
 
+      me = account;
       $("#user-name").textContent = account.company_name;
       $("#account-company").textContent = account.company_name;
       $("#account-phone").textContent = account.phone || "—";
@@ -626,7 +921,49 @@
       showTab("listings");
       return;
     }
+
+    const msgBtn = e.target.closest("[data-action='message-seller']");
+    if (msgBtn) {
+      openThread(Number(msgBtn.dataset.listingId), Number(msgBtn.dataset.sellerId), msgBtn.dataset.label);
+      return;
+    }
+
+    const convItem = e.target.closest(".conversation-item");
+    if (convItem) {
+      openThread(Number(convItem.dataset.listingId), Number(convItem.dataset.otherId), convItem.dataset.label);
+      return;
+    }
   });
+
+  const threadCompose = $("#thread-compose");
+  if (threadCompose) {
+    threadCompose.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!activeThread) return;
+      const input = $("#thread-input");
+      const body = input.value.trim();
+      if (!body) return;
+      try {
+        await api("/messages", {
+          method: "POST",
+          body: JSON.stringify({
+            listing_id: activeThread.listingId,
+            counterpart_account_id: activeThread.otherAccountId,
+            body
+          })
+        });
+        input.value = "";
+        await loadThreadMessages();
+        await loadConversations();
+      } catch (err) {
+        if (err.status === 403) {
+          $("#thread-compose").hidden = true;
+          $("#messages-disabled").hidden = false;
+        }
+        toast(err.message || "Failed to send message", "error");
+      }
+    });
+  }
 
   // Create listing form
   const createForm = $("#create-listing-form");
@@ -663,10 +1000,33 @@
   // i18n system
   const idText = {
     "seller.meta.title": "Dasbor Penjual - Yardline",
+    "seller.nav.guide": "Panduan",
+    "seller.guide.title": "Panduan Penjual",
     "seller.nav.dashboard": "Dasbor",
     "seller.nav.listings": "Peralatan Saya",
     "seller.nav.matches": "Kecocokan",
+    "seller.nav.marketplace": "Pasar",
+    "seller.nav.messages": "Pesan",
     "seller.nav.settings": "Pengaturan",
+    "seller.marketplace.title": "Pasar",
+    "seller.marketplace.equipment": "Peralatan",
+    "seller.marketplace.year": "Tahun",
+    "seller.marketplace.hours": "Jam Kerja",
+    "seller.marketplace.condition": "Kondisi",
+    "seller.marketplace.price": "Harga",
+    "seller.marketplace.location": "Lokasi",
+    "seller.marketplace.seller": "Penjual",
+    "seller.marketplace.loading": "Memuat...",
+    "seller.marketplace.noListings": "Belum ada peralatan lain tersedia",
+    "seller.marketplace.messageSeller": "Kirim Pesan",
+    "seller.marketplace.disabled": "Jelajah pasar belum diaktifkan — coba lagi nanti.",
+    "seller.messages.title": "Pesan",
+    "seller.messages.loading": "Memuat...",
+    "seller.messages.selectConversation": "Pilih percakapan",
+    "seller.messages.noConversations": "Belum ada percakapan",
+    "seller.messages.noMessages": "Belum ada pesan.",
+    "seller.messages.send": "Kirim",
+    "seller.messages.disabled": "Pesan saat ini dinonaktifkan oleh admin pasar.",
     "seller.logout": "Keluar",
     "seller.dashboard.title": "Dasbor",
     "seller.dashboard.account": "Informasi Akun",
@@ -800,6 +1160,11 @@
   };
   let currentLang = "en";
   let placeholderIndex = 0;
+  const langBlockEls = $$("[data-lang-block]");
+
+  function applyLangBlocks() {
+    langBlockEls.forEach(el => { el.hidden = el.dataset.langBlock !== currentLang; });
+  }
 
   function applyPlaceholder() {
     const el = $("#listing-description");
@@ -825,6 +1190,7 @@
       b.setAttribute("aria-pressed", String(b.dataset.langBtn === lang));
     });
     applyPlaceholder();
+    applyLangBlocks();
     try { localStorage.setItem("yardline-lang", lang); } catch (e) {}
   }
 

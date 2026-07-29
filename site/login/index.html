@@ -275,8 +275,7 @@ main {
       } else if (account.role === "seller") {
         window.location.href = "/seller";
       } else {
-        // Buyers redirect to home for now (buyer dashboard doesn't exist yet)
-        window.location.href = "/";
+        window.location.href = "/buyer";
       }
     } catch (err) {
       errorEl.textContent = t("login.error") || err.message;

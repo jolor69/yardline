@@ -6,7 +6,9 @@ import {
   getAccount,
   getListing,
   insertDraftListing,
+  isOpenModeEnabled,
   listAllListings,
+  listBrowsableListings,
   listListingsBySeller,
   updateListingFromExtraction,
 } from "../lib/db";
@@ -159,10 +161,28 @@ app.get("/", requireAuth, async (c) => {
   return c.json({ error: "Only sellers and admins can list listings" }, 403);
 });
 
-// Buyers never see raw listing rows directly — they only ever see listing
-// data through GET /api/matches/mine after an admin approves the match,
-// scoped to the fields defined in getApprovedMatchesForBuyer. Sellers can
-// see their own; admins can see any.
+// Open-mode browse: the public live catalog (active + confirmed listings
+// from every seller), available to buyers and sellers alike when the admin
+// has open mode enabled. Kept separate from GET /: that route is "my
+// mutable listings including drafts," this one is read-only and cross-seller.
+app.get("/browse", requireAuth, async (c) => {
+  const actor = c.get("account");
+  if (actor.role !== "buyer" && actor.role !== "seller") {
+    return c.json({ error: "Only buyers and sellers can browse the marketplace" }, 403);
+  }
+  if (!(await isOpenModeEnabled(c.env))) {
+    return c.json({ error: "Marketplace browsing is currently disabled" }, 403);
+  }
+  return c.json(await listBrowsableListings(c.env));
+});
+
+// Normally buyers never see raw listing rows directly — they only ever see
+// listing data through GET /api/matches/mine after an admin approves the
+// match, scoped to the fields defined in getApprovedMatchesForBuyer.
+// Sellers can see their own; admins can see any. When open mode is on,
+// buyers and sellers can also view any live (active + confirmed) listing —
+// contact still only ever happens through the message thread, never a
+// plaintext email/phone the way approved matches expose it.
 app.get("/:id", requireAuth, async (c) => {
   const id = Number(c.req.param("id"));
   if (!Number.isInteger(id)) return c.json({ error: "Invalid listing id" }, 400);
@@ -172,11 +192,18 @@ app.get("/:id", requireAuth, async (c) => {
 
   const actor = c.get("account");
   const isOwner = actor.role === "seller" && listing.account_id === actor.id;
-  if (!isOwner && actor.role !== "admin") {
-    return c.json({ error: "You don't have permission to view this listing" }, 403);
+  if (isOwner || actor.role === "admin") return c.json(listing);
+
+  const isLive = listing.active === 1 && listing.extraction_status === "ok";
+  if (
+    isLive &&
+    (actor.role === "buyer" || actor.role === "seller") &&
+    (await isOpenModeEnabled(c.env))
+  ) {
+    return c.json(listing);
   }
 
-  return c.json(listing);
+  return c.json({ error: "You don't have permission to view this listing" }, 403);
 });
 
 export default app;
