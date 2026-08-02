@@ -26,7 +26,11 @@ const app = new Hono<{ Bindings: Env }>();
 
 const PENDING_TTL_MINUTES = 10;
 const RATE_LIMIT_WINDOW_MINUTES = 60;
-const RATE_LIMIT_MAX_PER_IP = 5;
+// 5/hour proved too tight in practice: household NAT means every device
+// behind one router (phone, laptop, etc.) shares a single public IP, and
+// even one person testing a couple of times trips it. 20/hour still
+// meaningfully blocks automated abuse while covering realistic retries.
+const RATE_LIMIT_MAX_PER_IP = 20;
 
 function addMinutes(minutes: number): string {
   const d = new Date(Date.now() + minutes * 60_000);
