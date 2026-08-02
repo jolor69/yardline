@@ -209,6 +209,31 @@ app.post("/webhook", async (c) => {
     return c.json({ ok: true });
   }
 
+  // A user waiting for contact-share sometimes types their number as a
+  // plain message instead of tapping the button — that arrives as regular
+  // text, not a `contact` payload, so without this it's silently ignored
+  // (confirmed live: no webhook call at all followed a typed number).
+  // Typed numbers aren't Telegram-verified, so we don't accept them as a
+  // fallback — just point back at the button and resend it.
+  if (message.text && !message.text.startsWith("/")) {
+    const awaitingRow = await getPendingSignupByChatIdAwaitingContact(c.env, chatId);
+    if (awaitingRow) {
+      await sendMessage(
+        c.env,
+        chatId,
+        botText(
+          from.language_code,
+          "Please tap the \"Share phone number\" button below instead of typing it — that's what lets us verify it's really yours.",
+          "Silakan ketuk tombol \"Bagikan nomor telepon\" di bawah, bukan mengetiknya — ini yang memungkinkan kami memverifikasi bahwa itu benar nomor Anda.",
+        ),
+        requestContactKeyboard(
+          botText(from.language_code, "📱 Share phone number", "📱 Bagikan nomor telepon"),
+        ),
+      );
+      return c.json({ ok: true });
+    }
+  }
+
   if (message.contact) {
     const row = await getPendingSignupByChatIdAwaitingContact(c.env, chatId);
     if (!row) {
