@@ -193,8 +193,8 @@ app.post("/webhook", async (c) => {
       chatId,
       botText(
         from.language_code,
-        "Thanks! Tap the button below to share your phone number and finish registering with Yardline.",
-        "Terima kasih! Ketuk tombol di bawah untuk membagikan nomor telepon Anda dan selesaikan pendaftaran Yardline.",
+        "Thanks! Tap the \"Share phone number\" button below to finish registering. Please don't type your number into the message box — typing it will not complete your registration, only tapping the button works.",
+        "Terima kasih! Ketuk tombol \"Bagikan nomor telepon\" di bawah untuk menyelesaikan pendaftaran. Jangan mengetik nomor Anda di kotak pesan — mengetiknya tidak akan menyelesaikan pendaftaran, hanya menekan tombol yang berfungsi.",
       ),
       requestContactKeyboard(
         botText(from.language_code, "📱 Share phone number", "📱 Bagikan nomor telepon"),
@@ -217,8 +217,8 @@ app.post("/webhook", async (c) => {
         chatId,
         botText(
           from.language_code,
-          "Please tap the \"Share phone number\" button below instead of typing it — that's what lets us verify it's really yours.",
-          "Silakan ketuk tombol \"Bagikan nomor telepon\" di bawah, bukan mengetiknya — ini yang memungkinkan kami memverifikasi bahwa itu benar nomor Anda.",
+          "Typing your number won't complete your registration — please tap the \"Share phone number\" button below instead, that's what lets us verify it's really yours.",
+          "Mengetik nomor Anda tidak akan menyelesaikan pendaftaran — silakan ketuk tombol \"Bagikan nomor telepon\" di bawah, itu yang memungkinkan kami memverifikasi bahwa itu benar nomor Anda.",
         ),
         requestContactKeyboard(
           botText(from.language_code, "📱 Share phone number", "📱 Bagikan nomor telepon"),
