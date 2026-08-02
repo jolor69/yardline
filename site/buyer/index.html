@@ -411,7 +411,7 @@
     if (e.target.id === "logout-btn" || e.target.id === "settings-logout-btn") {
       try {
         await api("/auth/logout", { method: "POST" });
-        window.location.href = "/login";
+        window.location.href = "/";
       } catch (err) {
         toast(err.message || "Logout failed", "error");
       }
@@ -423,7 +423,7 @@
       e.target.disabled = true;
       try {
         await api("/auth/deactivate", { method: "POST" });
-        window.location.href = "/login";
+        window.location.href = "/";
       } catch (err) {
         toast(err.message || "Failed to delete account", "error");
         e.target.disabled = false;

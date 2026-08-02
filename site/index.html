@@ -143,11 +143,18 @@
         <h2 data-i18n="pricing.title">Pricing</h2>
         <p data-i18n="pricing.desc">One subscription per side, plus a commission — set by Yardline — when a match closes into a sale.</p>
       </div>
+      <div class="launch-banner reveal" style="--i:1">
+        <span class="launch-banner__icon" aria-hidden="true">🎉</span>
+        <div>
+          <p class="launch-banner__title" data-i18n="pricing.launch.title">No subscription during launch</p>
+          <p class="launch-banner__body" data-i18n="pricing.launch.body">Yardline is free to use for both buyers and sellers while we launch. Subscription pricing may apply in the future.</p>
+        </div>
+      </div>
       <div class="pricing-grid">
-        <div class="price-card reveal" style="--i:1">
+        <div class="price-card reveal" style="--i:2">
           <p class="price-card__plan" data-i18n="price.buyer.plan">Buyer</p>
-          <p class="price-card__price">$— <span data-i18n="price.unit">/ month</span></p>
-          <p class="price-card__note" data-i18n="price.note">Price to confirm</p>
+          <p class="price-card__price"><span class="price-card__free" data-i18n="price.free">FREE</span> <span data-i18n="price.duringLaunch">during launch</span></p>
+          <p class="price-card__note" data-i18n="price.launchNote">No subscription fee for now — pricing may apply in the future.</p>
           <p class="price-card__note" data-i18n="price.buyer.commission">+ commission on the purchase price, rate set by Yardline</p>
           <p class="price-card__desc" data-i18n="price.buyer.desc">For contractors and procurement teams sourcing specific equipment.</p>
           <ul class="price-card__list">
@@ -159,10 +166,10 @@
           </ul>
           <a class="btn btn--outline" href="/get-started?role=buyer" data-i18n="price.buyer.cta">Start as a buyer</a>
         </div>
-        <div class="price-card reveal" style="--i:2">
+        <div class="price-card reveal" style="--i:3">
           <p class="price-card__plan" data-i18n="price.seller.plan">Seller</p>
-          <p class="price-card__price">$— <span data-i18n="price.unit">/ month</span></p>
-          <p class="price-card__note" data-i18n="price.note">Price to confirm</p>
+          <p class="price-card__price"><span class="price-card__free" data-i18n="price.free">FREE</span> <span data-i18n="price.duringLaunch">during launch</span></p>
+          <p class="price-card__note" data-i18n="price.launchNote">No subscription fee for now — pricing may apply in the future.</p>
           <p class="price-card__note" data-i18n="price.seller.commission">+ commission on the sale price, rate set by Yardline</p>
           <p class="price-card__desc" data-i18n="price.seller.desc">For dealers and owners moving used equipment out of inventory.</p>
           <ul class="price-card__list">
@@ -332,10 +339,13 @@
     'tile.commission.body': 'Langganan Anda mencakup akses ke sistem pencocokan. Saat pencocokan menghasilkan penjualan, komisi atas harga jual juga berlaku, dengan besaran yang ditetapkan oleh Yardline.',
     'pricing.title': 'Harga',
     'pricing.desc': 'Satu langganan untuk tiap pihak, ditambah komisi — ditetapkan oleh Yardline — saat pencocokan berhasil menjadi penjualan.',
+    'pricing.launch.title': 'Tanpa langganan selama masa peluncuran',
+    'pricing.launch.body': 'Yardline gratis digunakan untuk pembeli maupun penjual selama masa peluncuran. Harga langganan mungkin berlaku di masa mendatang.',
     'price.buyer.plan': 'Pembeli',
     'price.seller.plan': 'Penjual',
-    'price.unit': '/ bulan',
-    'price.note': 'Harga akan dikonfirmasi',
+    'price.free': 'GRATIS',
+    'price.duringLaunch': 'selama masa peluncuran',
+    'price.launchNote': 'Tanpa biaya langganan untuk saat ini — harga mungkin berlaku di masa mendatang.',
     'price.buyer.commission': '+ komisi atas harga beli, besaran ditetapkan Yardline',
     'price.seller.commission': '+ komisi atas harga jual, besaran ditetapkan Yardline',
     'price.buyer.desc': 'Untuk kontraktor dan tim pengadaan yang mencari alat tertentu.',
