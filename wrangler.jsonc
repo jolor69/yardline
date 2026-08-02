@@ -56,7 +56,10 @@
   // are real secrets, set via `wrangler secret put` (see .dev.vars.example
   // for local dev). Update this once the bot is created via @BotFather.
   "vars": {
-    "TELEGRAM_BOT_USERNAME": "YardlineBot"
+    // Verified against the Bot API's own getMe response (2026-08-02) — the
+    // registered username has an underscore, unlike what was assumed
+    // earlier.
+    "TELEGRAM_BOT_USERNAME": "Yardline_bot"
   },
 
   "observability": { "enabled": true, "head_sampling_rate": 0.1 }
