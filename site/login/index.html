@@ -163,6 +163,23 @@ main {
 
 .telegram-hint { text-align: center; margin: var(--space-2xs) 0 0; }
 
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin: var(--space-lg) 0;
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-label);
+}
+.login-divider::before, .login-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--color-rule);
+}
+
 .back-link {
   display: block;
   width: 100%;
@@ -249,8 +266,10 @@ main {
       <button class="btn btn--accent btn--full" type="submit" id="login-submit" data-i18n="login.submit">Log in</button>
     </form>
 
-    <button class="btn btn--outline btn--full" id="telegram-login-btn" type="button" style="margin-top: var(--space-md);" data-i18n="login.telegram.button">Continue with Telegram</button>
-    <p class="sub telegram-hint" data-i18n="login.telegram.hint">Skip the password — verify with Telegram instead.</p>
+    <div class="login-divider" role="separator"><span data-i18n="login.or">or</span></div>
+
+    <button class="btn btn--outline btn--full" id="telegram-login-btn" type="button" data-i18n="login.telegram.button">Log in with phone number</button>
+    <p class="sub telegram-hint" data-i18n="login.telegram.hint">We'll confirm it's you via Telegram — no password needed.</p>
 
     <div class="form-footer">
       <p data-i18n="login.noAccount">Don't have an account? <a href="/get-started" data-i18n="login.signup">Sign up</a></p>
@@ -427,8 +446,9 @@ main {
     "login.noAccount": "Belum punya akun? <a href=\"/get-started\" data-i18n=\"login.signup\">Daftar</a>",
     "login.signup": "Daftar",
     "login.error": "Email atau kata sandi salah",
-    "login.telegram.button": "Lanjut dengan Telegram",
-    "login.telegram.hint": "Tanpa kata sandi — verifikasi langsung lewat Telegram.",
+    "login.or": "atau",
+    "login.telegram.button": "Masuk dengan nomor telepon",
+    "login.telegram.hint": "Kami akan mengonfirmasi lewat Telegram — tanpa kata sandi.",
     "login.telegram.waitTitle": "Hampir selesai",
     "login.telegram.waitSub": "Buka Telegram dan ketuk Start untuk masuk.",
     "login.telegram.openButton": "Buka Telegram",
