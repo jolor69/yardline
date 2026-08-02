@@ -168,8 +168,8 @@ app.post("/webhook", async (c) => {
         chatId,
         botText(
           from.language_code,
-          "Welcome back — you're already registered. You're now logged in, you can return to your browser.",
-          "Selamat datang kembali — Anda sudah terdaftar. Anda sekarang masuk, silakan kembali ke browser Anda.",
+          "Welcome back — you're logged in. You can close Telegram now and go back to the Yardline tab; it'll continue automatically.",
+          "Selamat datang kembali — Anda sudah masuk. Anda bisa menutup Telegram sekarang dan kembali ke tab Yardline; halaman akan lanjut secara otomatis.",
         ),
       );
       return c.json({ ok: true });
@@ -301,8 +301,8 @@ app.post("/webhook", async (c) => {
         newAccountId
           ? botText(
               from.language_code,
-              "You're all set! Return to your browser to continue.",
-              "Semua sudah siap! Kembali ke browser Anda untuk melanjutkan.",
+              "You're all set! You can close Telegram now and go back to the Yardline tab; it'll continue automatically.",
+              "Semua sudah siap! Anda bisa menutup Telegram sekarang dan kembali ke tab Yardline; halaman akan lanjut secara otomatis.",
             )
           : botText(
               from.language_code,
