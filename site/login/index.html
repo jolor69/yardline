@@ -310,6 +310,17 @@ main {
     return data;
   }
 
+  // Already logged in? Skip the form entirely — showing a login page to
+  // someone with a valid session serves no purpose.
+  (async function redirectIfLoggedIn() {
+    try {
+      var account = await api("/auth/me");
+      redirectByRole(account);
+    } catch (e) {
+      // 401 (not logged in) — proceed and show the form as normal.
+    }
+  })();
+
   var form = $("#login-form");
   var submit = $("#login-submit");
   var errorEl = $("#login-error");

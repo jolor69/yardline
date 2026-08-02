@@ -419,6 +419,22 @@ main {
     return data;
   }
 
+  // Already logged in? Skip signup entirely — showing this page to
+  // someone with a valid session serves no purpose.
+  function redirectByRole(account) {
+    if (account.role === "admin") window.location.href = "/admin";
+    else if (account.role === "seller") window.location.href = "/seller";
+    else window.location.href = "/buyer";
+  }
+  (async function redirectIfLoggedIn() {
+    try {
+      var account = await api("/auth/me");
+      redirectByRole(account);
+    } catch (e) {
+      // 401 (not logged in) — proceed and show the signup flow as normal.
+    }
+  })();
+
   var ALL_STATES = [
     "state-role",
     "state-method",

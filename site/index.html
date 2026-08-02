@@ -25,8 +25,14 @@
         <button type="button" class="lang-btn" data-lang-btn="en" aria-pressed="true">EN</button>
         <button type="button" class="lang-btn" data-lang-btn="id" aria-pressed="false">ID</button>
       </div>
-      <a class="btn btn--text nav__login" href="/login" data-i18n="nav.login">Log in</a>
-      <a class="btn btn--accent" href="/get-started" data-i18n="nav.start">Get started</a>
+      <div class="nav__auth" id="nav-auth-guest">
+        <a class="btn btn--text nav__login" href="/login" data-i18n="nav.login">Log in</a>
+        <a class="btn btn--accent" href="/get-started" data-i18n="nav.start">Get started</a>
+      </div>
+      <div class="nav__auth is-hidden" id="nav-auth-user">
+        <a class="btn btn--text" href="/buyer" id="nav-dashboard-link" data-i18n="nav.dashboard">Dashboard</a>
+        <button type="button" class="btn btn--outline" id="nav-logout-btn" data-i18n="nav.logout">Log out</button>
+      </div>
     </div>
   </div>
 </header>
@@ -287,6 +293,8 @@
     'nav.pricing': 'Harga',
     'nav.login': 'Masuk',
     'nav.start': 'Mulai',
+    'nav.dashboard': 'Dasbor',
+    'nav.logout': 'Keluar',
     'hero.title': 'Dicocokkan, bukan sekadar didaftar.',
     'hero.lede': 'Yardline mencocokkan pembeli terverifikasi dengan penjual terverifikasi alat berat bekas — ekskavator, loader, crane, dan attachment. Atur kriteria Anda sekali — kami beri tahu saat pihak lain cocok.',
     'hero.cta.buyer': 'Cari alat',
@@ -414,6 +422,32 @@
   try { savedLang = localStorage.getItem('yardline-lang'); } catch (e) {}
   var geoLang = savedLang === null ? getCookie('yardline-geo') : null;
   if (savedLang === 'id' || geoLang === 'id') { setLang('id'); }
+
+  /* -------------------------------------------------------------- */
+  /* Session-aware nav — soft check, doesn't gate the page itself.   */
+  /* Logged-out visitors see no change at all (today's behavior).    */
+  /* -------------------------------------------------------------- */
+
+  (function initAuthNav() {
+    fetch('/api/auth/me', { credentials: 'include' }).then(function (res) {
+      if (!res.ok) return;
+      return res.json().then(function (account) {
+        var dashboardPath = account.role === 'admin' ? '/admin' : account.role === 'seller' ? '/seller' : '/buyer';
+        document.getElementById('nav-dashboard-link').setAttribute('href', dashboardPath);
+        document.getElementById('nav-auth-guest').classList.add('is-hidden');
+        document.getElementById('nav-auth-user').classList.remove('is-hidden');
+      });
+    }).catch(function () { /* stay as guest nav */ });
+  })();
+
+  var navLogoutBtn = document.getElementById('nav-logout-btn');
+  if (navLogoutBtn) {
+    navLogoutBtn.addEventListener('click', function () {
+      fetch('/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(function () {}).then(function () {
+        window.location.href = '/';
+      });
+    });
+  }
 })();
 </script>
 

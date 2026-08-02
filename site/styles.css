@@ -277,6 +277,9 @@ p { margin: 0; }
   .nav__login { display: none; }
 }
 
+.nav__auth { display: flex; align-items: center; gap: var(--space-md); }
+.is-hidden { display: none; }
+
 /* ---------------------------------------------------------------- */
 /* Hero — H2 Split diptych                                           */
 /* ---------------------------------------------------------------- */
