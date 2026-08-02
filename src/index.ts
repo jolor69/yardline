@@ -11,6 +11,7 @@ import matchesMine from "./routes/matches-mine";
 import messages from "./routes/messages";
 import outcomes from "./routes/outcomes";
 import { listingPhotos, photoServe } from "./routes/photos";
+import telegram from "./routes/telegram";
 import type { Env } from "./lib/types";
 
 function jsonError(err: unknown, c: Context) {
@@ -44,6 +45,7 @@ api.route("/matches", matchesMine);
 api.route("/photos", photoServe);
 api.route("/messages", messages);
 api.route("/admin", admin);
+api.route("/telegram", telegram);
 
 app.route("/api", api);
 

@@ -106,6 +106,7 @@ main {
 }
 
 .login-card p.sub { color: var(--color-muted); font-size: var(--text-sm); margin: 0 0 var(--space-lg); }
+.login-card.is-hidden { display: none; }
 
 /* Forms */
 .field { display: flex; flex-direction: column; gap: var(--space-2xs); margin-bottom: var(--space-md); }
@@ -154,6 +155,29 @@ main {
 .btn--accent { background: var(--color-accent); color: var(--color-accent-ink); }
 .btn--accent:hover { background: oklch(59% 0.17 28); }
 .btn--full { width: 100%; }
+
+.btn--outline { background: transparent; color: var(--color-ink); border: 1px solid var(--color-rule-2); }
+@media (hover: hover) and (pointer: fine) {
+  .btn--outline:hover { border-color: var(--color-ink-2); background: var(--color-paper-2); }
+}
+
+.telegram-hint { text-align: center; margin: var(--space-2xs) 0 0; }
+
+.back-link {
+  display: block;
+  width: 100%;
+  margin-top: var(--space-lg);
+  padding: var(--space-sm);
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-input);
+  background: transparent;
+  color: var(--color-accent);
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+}
 
 .error-text { color: var(--color-error); font-size: var(--text-sm); min-height: 1lh; }
 
@@ -205,7 +229,7 @@ main {
 </header>
 
 <main>
-  <div class="login-card">
+  <div class="login-card" id="state-login">
     <h1 data-i18n="login.title">Log in</h1>
     <p class="sub" data-i18n="login.subtitle">Sign in to your Yardline account</p>
 
@@ -225,9 +249,25 @@ main {
       <button class="btn btn--accent btn--full" type="submit" id="login-submit" data-i18n="login.submit">Log in</button>
     </form>
 
+    <button class="btn btn--outline btn--full" id="telegram-login-btn" type="button" style="margin-top: var(--space-md);" data-i18n="login.telegram.button">Continue with Telegram</button>
+    <p class="sub telegram-hint" data-i18n="login.telegram.hint">Skip the password — verify with Telegram instead.</p>
+
     <div class="form-footer">
       <p data-i18n="login.noAccount">Don't have an account? <a href="/get-started" data-i18n="login.signup">Sign up</a></p>
     </div>
+  </div>
+
+  <!-- Telegram login waiting — deep link + status polling -->
+  <div class="login-card is-hidden" id="state-telegram-wait">
+    <h1 data-i18n="login.telegram.waitTitle">Almost there</h1>
+    <p class="sub" data-i18n="login.telegram.waitSub">Open Telegram and tap Start to log in.</p>
+
+    <a class="btn btn--accent btn--full" id="telegram-deep-link" href="#" target="_blank" rel="noopener" data-i18n="login.telegram.openButton">Open Telegram</a>
+
+    <p class="sub" id="telegram-wait-status" style="margin-top: var(--space-lg);" data-i18n="login.telegram.waiting">Waiting for you to tap Start in Telegram…</p>
+    <p class="error-text" id="telegram-wait-error"></p>
+
+    <button class="back-link" id="telegram-wait-back-btn" type="button" data-i18n="login.telegram.back">Back</button>
   </div>
 </main>
 
@@ -269,20 +309,111 @@ main {
         body: JSON.stringify({ email: email, password: password })
       });
 
-      // Redirect based on role
-      if (account.role === "admin") {
-        window.location.href = "/admin";
-      } else if (account.role === "seller") {
-        window.location.href = "/seller";
-      } else {
-        window.location.href = "/buyer";
-      }
+      redirectByRole(account);
     } catch (err) {
       errorEl.textContent = t("login.error") || err.message;
     } finally {
       submit.disabled = false;
     }
   });
+
+  function redirectByRole(account) {
+    if (account.role === "admin") {
+      window.location.href = "/admin";
+    } else if (account.role === "seller") {
+      window.location.href = "/seller";
+    } else {
+      window.location.href = "/buyer";
+    }
+  }
+
+  /* Telegram login */
+  var TELEGRAM_POLL_MS = 1500;
+  var TELEGRAM_MAX_WAIT_MS = 5 * 60 * 1000;
+  var telegramPollTimer = null;
+  var telegramPollDeadline = null;
+
+  function stopTelegramPoll() {
+    if (telegramPollTimer) {
+      clearInterval(telegramPollTimer);
+      telegramPollTimer = null;
+    }
+  }
+
+  function showState(id) {
+    ["state-login", "state-telegram-wait"].forEach(function (s) {
+      $(("#" + s)).classList.toggle("is-hidden", s !== id);
+    });
+  }
+
+  var telegramWaitStatus = $("#telegram-wait-status");
+  var telegramWaitError = $("#telegram-wait-error");
+  var telegramDeepLink = $("#telegram-deep-link");
+
+  $("#telegram-wait-back-btn").addEventListener("click", function () {
+    stopTelegramPoll();
+    showState("state-login");
+  });
+
+  $("#telegram-login-btn").addEventListener("click", async function () {
+    var btn = $("#telegram-login-btn");
+    btn.disabled = true;
+    try {
+      var res = await api("/telegram/start", {
+        method: "POST",
+        body: JSON.stringify({ intent: "login" })
+      });
+
+      telegramDeepLink.href = res.deep_link;
+      telegramWaitError.textContent = "";
+      telegramWaitStatus.textContent = t("login.telegram.waiting");
+      showState("state-telegram-wait");
+      startTelegramPoll(res.token);
+    } catch (err) {
+      errorEl.textContent = err.message || t("login.error");
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  function startTelegramPoll(token) {
+    stopTelegramPoll();
+    telegramPollDeadline = Date.now() + TELEGRAM_MAX_WAIT_MS;
+
+    telegramPollTimer = setInterval(async function () {
+      if (Date.now() > telegramPollDeadline) {
+        stopTelegramPoll();
+        telegramWaitError.textContent = t("login.telegram.timedOut");
+        return;
+      }
+
+      var status;
+      try {
+        status = await api("/telegram/status?token=" + encodeURIComponent(token));
+      } catch (err) {
+        // Transient network hiccup — keep polling until the deadline.
+        return;
+      }
+
+      if (status.status === "awaiting_start") {
+        telegramWaitStatus.textContent = t("login.telegram.waiting");
+      } else if (status.status === "completed" || status.status === "consumed") {
+        stopTelegramPoll();
+        redirectByRole(status.account);
+      } else if (status.status === "expired") {
+        stopTelegramPoll();
+        telegramWaitError.textContent = t("login.telegram.expired");
+      } else if (status.status === "error") {
+        stopTelegramPoll();
+        var detailKey = "login.telegram.error." + (status.detail || "generic");
+        var msg = t(detailKey);
+        telegramWaitError.textContent = msg === detailKey ? t("login.telegram.error.generic") : msg;
+      } else if (status.status === "not_found") {
+        stopTelegramPoll();
+        telegramWaitError.textContent = t("login.telegram.expired");
+      }
+    }, TELEGRAM_POLL_MS);
+  }
 
   /* Language toggle */
   var idText = {
@@ -295,7 +426,19 @@ main {
     "login.submit": "Masuk",
     "login.noAccount": "Belum punya akun? <a href=\"/get-started\" data-i18n=\"login.signup\">Daftar</a>",
     "login.signup": "Daftar",
-    "login.error": "Email atau kata sandi salah"
+    "login.error": "Email atau kata sandi salah",
+    "login.telegram.button": "Lanjut dengan Telegram",
+    "login.telegram.hint": "Tanpa kata sandi — verifikasi langsung lewat Telegram.",
+    "login.telegram.waitTitle": "Hampir selesai",
+    "login.telegram.waitSub": "Buka Telegram dan ketuk Start untuk masuk.",
+    "login.telegram.openButton": "Buka Telegram",
+    "login.telegram.waiting": "Menunggu Anda mengetuk Start di Telegram…",
+    "login.telegram.back": "Kembali",
+    "login.telegram.expired": "Tautan ini kedaluwarsa — silakan coba lagi.",
+    "login.telegram.timedOut": "Menunggu terlalu lama — silakan coba lagi.",
+    "login.telegram.error.generic": "Terjadi kesalahan. Silakan coba lagi.",
+    "login.telegram.error.not_registered": "Tidak ditemukan akun untuk Telegram ini. Silakan daftar dulu.",
+    "login.telegram.error.account_missing": "Terjadi kesalahan. Silakan coba lagi."
   };
 
   var i18nEls = document.querySelectorAll("[data-i18n]");
@@ -303,6 +446,18 @@ main {
   i18nEls.forEach(function (el) {
     var key = el.dataset.i18n;
     enText[key] = el.tagName === "TITLE" ? el.textContent : el.innerHTML;
+  });
+
+  // Dynamic-only keys (never tagged on a DOM element, only referenced via
+  // t()) — without this, English silently falls back to the raw key string.
+  // "login.error" predates this change; same bug, fixed in passing.
+  Object.assign(enText, {
+    "login.error": "Incorrect email or password",
+    "login.telegram.expired": "This link has expired — please try again.",
+    "login.telegram.timedOut": "This took too long — please try again.",
+    "login.telegram.error.generic": "Something went wrong. Please try again.",
+    "login.telegram.error.not_registered": "No account found for this Telegram. Please sign up first.",
+    "login.telegram.error.account_missing": "Something went wrong. Please try again."
   });
 
   var currentDict = enText;

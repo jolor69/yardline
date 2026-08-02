@@ -4,6 +4,9 @@ export interface Env {
   PHOTOS: R2Bucket;
   OPENROUTER_API_KEY: string;
   RESEND_API_KEY: string;
+  TELEGRAM_BOT_TOKEN: string;
+  TELEGRAM_WEBHOOK_SECRET: string;
+  TELEGRAM_BOT_USERNAME: string;
 }
 
 export type Role = "buyer" | "seller" | "admin";
@@ -35,6 +38,8 @@ export interface Account {
   region: string | null;
   lat: number | null;
   lng: number | null;
+  telegram_id: number | null;
+  telegram_username: string | null;
   created_at: string;
 }
 
@@ -133,4 +138,34 @@ export interface MessageRow {
   sender_account_id: number;
   body: string;
   created_at: string;
+}
+
+export type TelegramIntent = "signup" | "login";
+export type TelegramPendingStatus =
+  | "awaiting_start"
+  | "awaiting_contact"
+  | "completed"
+  | "consumed"
+  | "expired"
+  | "error";
+
+export interface TelegramPendingSignup {
+  token: string;
+  intent: TelegramIntent;
+  role: "buyer" | "seller" | null;
+  company_name: string | null;
+  email: string | null;
+  city: string | null;
+  region: string | null;
+  lat: number | null;
+  lng: number | null;
+  chat_id: number | null;
+  telegram_user_id: number | null;
+  telegram_username: string | null;
+  status: TelegramPendingStatus;
+  account_id: number | null;
+  detail: string | null;
+  requester_ip: string | null;
+  created_at: string;
+  expires_at: string;
 }

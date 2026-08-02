@@ -53,6 +53,16 @@ export async function hashPassword(password: string): Promise<string> {
   return `${toBase64(salt)}:${toBase64(hash)}`;
 }
 
+// Telegram-only accounts have no password. This sentinel is deliberately
+// colon-free: verifyPassword() below does stored.split(":"), and a
+// colon-free string makes hashB64 undefined, so it returns false safely
+// with no extra null-checks needed anywhere a password_hash is read.
+export const NO_PASSWORD_SENTINEL = "telegram-account-no-password";
+
+export function hasPassword(account: Account): boolean {
+  return account.password_hash !== NO_PASSWORD_SENTINEL;
+}
+
 export async function verifyPassword(password: string, stored: string): Promise<boolean> {
   const [saltB64, hashB64] = stored.split(":");
   if (!saltB64 || !hashB64) return false;

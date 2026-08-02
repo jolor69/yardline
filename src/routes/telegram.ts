@@ -1,0 +1,331 @@
+import { Hono } from "hono";
+import { z } from "zod";
+import { createSession, randomToken } from "../lib/auth";
+import {
+  completePendingSignup,
+  consumePendingSignup,
+  countRecentPendingSignupsByIp,
+  expirePendingSignup,
+  failPendingSignup,
+  getAccount,
+  getAccountByEmail,
+  getAccountByTelegramId,
+  getPendingSignupByChatIdAwaitingContact,
+  getTelegramPendingSignup,
+  insertAccount,
+  insertTelegramPendingSignup,
+  linkPendingSignupToChat,
+  markPendingSignupAwaitingContact,
+  toPublicAccount,
+} from "../lib/db";
+import { safeJson } from "../lib/http";
+import { requestContactKeyboard, sendMessage, verifyWebhookSecret } from "../lib/telegram";
+import type { TelegramUpdate } from "../lib/telegram";
+import type { Env } from "../lib/types";
+
+const app = new Hono<{ Bindings: Env }>();
+
+const PENDING_TTL_MINUTES = 10;
+const RATE_LIMIT_WINDOW_MINUTES = 60;
+const RATE_LIMIT_MAX_PER_IP = 5;
+
+function addMinutes(minutes: number): string {
+  const d = new Date(Date.now() + minutes * 60_000);
+  return d.toISOString().slice(0, 19).replace("T", " ");
+}
+
+// expires_at is stored as "YYYY-MM-DD HH:MM:SS" (SQLite datetime('now')
+// format, no "T", no "Z" — same shape addDays() produces in lib/auth.ts).
+// Converting to real ISO8601 before parsing avoids relying on lenient
+// (and inconsistent-across-runtimes) Date parsing of the raw string.
+function isPastExpiry(expiresAt: string): boolean {
+  return new Date(`${expiresAt.replace(" ", "T")}Z`).getTime() < Date.now();
+}
+
+// Bot replies are bilingual, matching this site's EN/ID-first audience —
+// Telegram supplies message.from.language_code for free, no geo lookup needed.
+function botText(languageCode: string | undefined, en: string, id: string): string {
+  return languageCode?.toLowerCase().startsWith("id") ? id : en;
+}
+
+// ---------------------------------------------------------------------
+// POST /start — browser calls this to begin either flow; returns a deep
+// link into Telegram plus a token the browser then polls via /status.
+// ---------------------------------------------------------------------
+
+const startSchema = z.discriminatedUnion("intent", [
+  z.object({
+    intent: z.literal("signup"),
+    role: z.enum(["buyer", "seller"]),
+    company_name: z.string().min(1),
+    email: z.string().email(),
+    city: z.string().optional(),
+    region: z.string().optional(),
+    lat: z.number().optional(),
+    lng: z.number().optional(),
+  }),
+  z.object({ intent: z.literal("login") }),
+]);
+
+app.post("/start", async (c) => {
+  const body = startSchema.safeParse(await safeJson(c));
+  if (!body.success) {
+    return c.json({ error: "Invalid payload", details: body.error.issues }, 400);
+  }
+
+  const ip = c.req.header("CF-Connecting-IP") ?? "unknown";
+  const recentCount = await countRecentPendingSignupsByIp(
+    c.env,
+    ip,
+    addMinutes(-RATE_LIMIT_WINDOW_MINUTES),
+  );
+  if (recentCount >= RATE_LIMIT_MAX_PER_IP) {
+    return c.json({ error: "Too many attempts — please try again later" }, 429);
+  }
+
+  if (body.data.intent === "signup") {
+    const existing = await getAccountByEmail(c.env, body.data.email);
+    if (existing) {
+      return c.json({ error: "An account with this email already exists" }, 409);
+    }
+  }
+
+  const token = randomToken();
+  const expires_at = addMinutes(PENDING_TTL_MINUTES);
+
+  await insertTelegramPendingSignup(c.env, {
+    token,
+    intent: body.data.intent,
+    role: body.data.intent === "signup" ? body.data.role : null,
+    company_name: body.data.intent === "signup" ? body.data.company_name : null,
+    email: body.data.intent === "signup" ? body.data.email : null,
+    city: body.data.intent === "signup" ? (body.data.city ?? null) : null,
+    region: body.data.intent === "signup" ? (body.data.region ?? null) : null,
+    lat: body.data.intent === "signup" ? (body.data.lat ?? null) : null,
+    lng: body.data.intent === "signup" ? (body.data.lng ?? null) : null,
+    requester_ip: ip,
+    expires_at,
+  });
+
+  const deep_link = `https://t.me/${c.env.TELEGRAM_BOT_USERNAME}?start=${token}`;
+  return c.json({ token, deep_link, expires_at });
+});
+
+// ---------------------------------------------------------------------
+// POST /webhook — Telegram calls this. Always return 200 for any outcome
+// we've already communicated to the user via a bot reply, so Telegram
+// doesn't retry cases that will never resolve differently on retry.
+// ---------------------------------------------------------------------
+
+app.post("/webhook", async (c) => {
+  if (!verifyWebhookSecret(c.env, c.req.header("X-Telegram-Bot-Api-Secret-Token"))) {
+    return c.json({ error: "Unauthorized" }, 401);
+  }
+
+  const update = (await safeJson(c)) as TelegramUpdate;
+  const message = update.message;
+  if (!message || !message.from) {
+    return c.json({ ok: true });
+  }
+
+  const from = message.from;
+  const chatId = message.chat.id;
+
+  if (message.text?.startsWith("/start ")) {
+    const token = message.text.slice("/start ".length).trim();
+    const row = await getTelegramPendingSignup(c.env, token);
+
+    const invalid =
+      !row ||
+      isPastExpiry(row.expires_at) ||
+      !["awaiting_start", "awaiting_contact"].includes(row.status);
+
+    if (invalid) {
+      if (row && row.status === "awaiting_start") await expirePendingSignup(c.env, token);
+      await sendMessage(
+        c.env,
+        chatId,
+        botText(
+          from.language_code,
+          "This signup link is invalid or has expired — please go back to Yardline and try again.",
+          "Tautan pendaftaran ini tidak valid atau sudah kedaluwarsa — silakan kembali ke Yardline dan coba lagi.",
+        ),
+      );
+      return c.json({ ok: true });
+    }
+
+    await linkPendingSignupToChat(c.env, token, {
+      chat_id: chatId,
+      telegram_user_id: from.id,
+      telegram_username: from.username ?? null,
+    });
+
+    const existingAccount = await getAccountByTelegramId(c.env, from.id);
+    if (existingAccount) {
+      await completePendingSignup(c.env, token, existingAccount.id, "existing_account_logged_in");
+      await sendMessage(
+        c.env,
+        chatId,
+        botText(
+          from.language_code,
+          "Welcome back — you're already registered. You're now logged in, you can return to your browser.",
+          "Selamat datang kembali — Anda sudah terdaftar. Anda sekarang masuk, silakan kembali ke browser Anda.",
+        ),
+      );
+      return c.json({ ok: true });
+    }
+
+    if (row!.intent === "login") {
+      await failPendingSignup(c.env, token, "not_registered");
+      await sendMessage(
+        c.env,
+        chatId,
+        botText(
+          from.language_code,
+          "We couldn't find a Yardline account linked to this Telegram. Please sign up first, or log in with email and password if you already have an account.",
+          "Kami tidak menemukan akun Yardline yang terhubung dengan Telegram ini. Silakan daftar dulu, atau masuk dengan email dan kata sandi jika Anda sudah punya akun.",
+        ),
+      );
+      return c.json({ ok: true });
+    }
+
+    await markPendingSignupAwaitingContact(c.env, token, {
+      chat_id: chatId,
+      telegram_user_id: from.id,
+      telegram_username: from.username ?? null,
+    });
+    await sendMessage(
+      c.env,
+      chatId,
+      botText(
+        from.language_code,
+        "Thanks! Tap the button below to share your phone number and finish registering with Yardline.",
+        "Terima kasih! Ketuk tombol di bawah untuk membagikan nomor telepon Anda dan selesaikan pendaftaran Yardline.",
+      ),
+      requestContactKeyboard(
+        botText(from.language_code, "📱 Share phone number", "📱 Bagikan nomor telepon"),
+      ),
+    );
+    return c.json({ ok: true });
+  }
+
+  if (message.contact) {
+    const row = await getPendingSignupByChatIdAwaitingContact(c.env, chatId);
+    if (!row) {
+      await sendMessage(
+        c.env,
+        chatId,
+        botText(
+          from.language_code,
+          "Please start over from the Yardline website.",
+          "Silakan mulai lagi dari situs Yardline.",
+        ),
+      );
+      return c.json({ ok: true });
+    }
+
+    if (message.contact.user_id && message.contact.user_id !== from.id) {
+      await sendMessage(
+        c.env,
+        chatId,
+        botText(
+          from.language_code,
+          "Please share your own phone number using the button provided.",
+          "Silakan bagikan nomor telepon Anda sendiri menggunakan tombol yang disediakan.",
+        ),
+      );
+      return c.json({ ok: true });
+    }
+
+    // Only the account-creation + pending-row transition are the critical
+    // path here — a failure in the *notification* sendMessage below must
+    // never roll this back to 'error', since /status would then tell a
+    // successfully-registered user their signup failed and never mint them
+    // a session. Notification is best-effort, isolated in its own try/catch.
+    let newAccountId: number | null = null;
+    try {
+      const account = await insertAccount(c.env, {
+        role: row.role!,
+        company_name: row.company_name!,
+        email: row.email!,
+        phone: message.contact.phone_number,
+        telegram_id: from.id,
+        telegram_username: from.username ?? null,
+        city: row.city,
+        region: row.region,
+        lat: row.lat,
+        lng: row.lng,
+      });
+      await completePendingSignup(c.env, row.token, account.id);
+      newAccountId = account.id;
+    } catch (err) {
+      const errMessage = err instanceof Error ? err.message : String(err);
+      const detail = errMessage.includes("telegram_id")
+        ? "telegram_already_linked"
+        : errMessage.includes("email")
+          ? "email_taken"
+          : "signup_failed";
+      console.error("Telegram signup failed", err);
+      await failPendingSignup(c.env, row.token, detail);
+    }
+
+    try {
+      await sendMessage(
+        c.env,
+        chatId,
+        newAccountId
+          ? botText(
+              from.language_code,
+              "You're all set! Return to your browser to continue.",
+              "Semua sudah siap! Kembali ke browser Anda untuk melanjutkan.",
+            )
+          : botText(
+              from.language_code,
+              "Something went wrong finishing your registration — please go back to Yardline and try again.",
+              "Terjadi kesalahan saat menyelesaikan pendaftaran Anda — silakan kembali ke Yardline dan coba lagi.",
+            ),
+      );
+    } catch (err) {
+      console.error("Telegram notification failed (non-critical)", err);
+    }
+    return c.json({ ok: true });
+  }
+
+  return c.json({ ok: true });
+});
+
+// ---------------------------------------------------------------------
+// GET /status?token= — polled by the browser tab that opened the deep
+// link. Session creation happens exactly once, on the first read of a
+// 'completed' row, which then flips it to 'consumed'.
+// ---------------------------------------------------------------------
+
+app.get("/status", async (c) => {
+  const token = c.req.query("token");
+  if (!token) return c.json({ error: "Missing token" }, 400);
+
+  const row = await getTelegramPendingSignup(c.env, token);
+  if (!row) return c.json({ status: "not_found" }, 404);
+
+  if (row.status === "awaiting_start" || row.status === "awaiting_contact") {
+    if (isPastExpiry(row.expires_at)) {
+      await expirePendingSignup(c.env, token);
+      return c.json({ status: "expired" });
+    }
+    return c.json({ status: row.status });
+  }
+
+  if (row.status === "expired") return c.json({ status: "expired" });
+  if (row.status === "error") return c.json({ status: "error", detail: row.detail });
+  if (row.status === "consumed") return c.json({ status: "consumed" });
+
+  // completed — first read mints the session, then consumes the token.
+  const account = row.account_id ? await getAccount(c.env, row.account_id) : null;
+  if (!account) return c.json({ status: "error", detail: "account_missing" });
+
+  await createSession(c.env, c, account.id);
+  await consumePendingSignup(c.env, token);
+  return c.json({ status: "completed", account: toPublicAccount(account) });
+});
+
+export default app;

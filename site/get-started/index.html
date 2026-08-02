@@ -133,6 +133,61 @@ main {
 .role-btn:hover { border-color: var(--color-accent); background: var(--color-paper-2); }
 .role-btn.active { border-color: var(--color-accent); background: var(--color-accent); color: var(--color-accent-ink); }
 
+/* Method selection (email vs Telegram) */
+.method-select {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.method-btn {
+  padding: var(--space-md);
+  border: 2px solid var(--color-rule);
+  border-radius: var(--radius-card);
+  background: var(--color-paper);
+  color: var(--color-ink-2);
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all var(--dur-short) var(--ease-out);
+  text-align: left;
+}
+
+.method-btn:hover { border-color: var(--color-accent); background: var(--color-paper-2); }
+
+.method-btn__title {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-ink);
+  margin-bottom: var(--space-2xs);
+}
+
+.method-btn__bullets {
+  margin: 0;
+  padding-left: 1.1em;
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.back-link {
+  display: block;
+  width: 100%;
+  margin-top: var(--space-lg);
+  padding: var(--space-sm);
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-input);
+  background: transparent;
+  color: var(--color-accent);
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+}
+
 /* Forms */
 .field { display: flex; flex-direction: column; gap: var(--space-2xs); margin-bottom: var(--space-md); }
 .field label { font-size: var(--text-sm); font-weight: 600; color: var(--color-ink-2); }
@@ -236,7 +291,81 @@ main {
     </div>
   </div>
 
-  <!-- Step 2: Signup Form -->
+  <!-- Step 2: Method Selection -->
+  <div class="signup-card is-hidden" id="state-method">
+    <h1 data-i18n="signup.method.title">How would you like to sign up?</h1>
+    <p class="sub" data-i18n="signup.method.sub">Choose whichever works best for you</p>
+
+    <div class="method-select">
+      <button class="method-btn" id="method-email" type="button">
+        <div class="method-btn__title" data-i18n="signup.method.emailTitle">Sign up with Email</div>
+        <ul class="method-btn__bullets">
+          <li data-i18n="signup.method.emailBullet1">Works on any device, no app needed</li>
+          <li data-i18n="signup.method.emailBullet2">Good for shared company inboxes</li>
+          <li data-i18n="signup.method.emailBullet3">Standard password reset</li>
+        </ul>
+      </button>
+      <button class="method-btn" id="method-telegram" type="button">
+        <div class="method-btn__title" data-i18n="signup.method.telegramTitle">Sign up with Telegram</div>
+        <ul class="method-btn__bullets">
+          <li data-i18n="signup.method.telegramBullet1">No password to create or remember</li>
+          <li data-i18n="signup.method.telegramBullet2">Phone verified instantly by Telegram</li>
+          <li data-i18n="signup.method.telegramBullet3">Done in under a minute</li>
+        </ul>
+      </button>
+    </div>
+
+    <button class="back-link" id="method-back-btn" type="button" data-i18n="signup.back">Back</button>
+  </div>
+
+  <!-- Step 3a: Telegram mini-form (company + email only, no password) -->
+  <div class="signup-card is-hidden" id="state-telegram-form">
+    <h1 data-i18n="signup.telegram.title">Sign up with Telegram</h1>
+    <p class="sub" data-i18n="signup.telegram.sub">Just a couple of details first — your phone number comes from Telegram</p>
+
+    <form id="telegram-form">
+      <div class="field">
+        <label for="tg-company" data-i18n="signup.company">Company Name</label>
+        <input class="input" id="tg-company" type="text" required />
+      </div>
+
+      <div class="field">
+        <label for="tg-email" data-i18n="signup.email">Email</label>
+        <input class="input" id="tg-email" type="email" required />
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="tg-city" data-i18n="signup.city">City</label>
+          <input class="input" id="tg-city" type="text" />
+        </div>
+        <div class="field">
+          <label for="tg-region" data-i18n="signup.region">Region</label>
+          <input class="input" id="tg-region" type="text" />
+        </div>
+      </div>
+
+      <p class="error-text" id="telegram-form-error"></p>
+      <button class="btn btn--accent btn--full" type="submit" id="telegram-form-submit" data-i18n="signup.telegram.continue">Continue to Telegram</button>
+    </form>
+
+    <button class="back-link" id="telegram-form-back-btn" type="button" data-i18n="signup.back">Back</button>
+  </div>
+
+  <!-- Step 3b: Telegram waiting — deep link + status polling -->
+  <div class="signup-card is-hidden" id="state-telegram-wait">
+    <h1 data-i18n="signup.telegram.waitTitle">Almost there</h1>
+    <p class="sub" data-i18n="signup.telegram.waitSub">Open Telegram, tap Start, then share your phone number when asked.</p>
+
+    <a class="btn btn--accent btn--full" id="telegram-deep-link" href="#" target="_blank" rel="noopener" data-i18n="signup.telegram.openButton">Open Telegram</a>
+
+    <p class="sub" id="telegram-wait-status" style="margin-top: var(--space-lg);" data-i18n="signup.telegram.waitingStart">Waiting for you to tap Start in Telegram…</p>
+    <p class="error-text" id="telegram-wait-error"></p>
+
+    <button class="back-link" id="telegram-wait-back-btn" type="button" data-i18n="signup.back">Back</button>
+  </div>
+
+  <!-- Step 4: Signup Form (email) -->
   <div class="signup-card is-hidden" id="state-form">
     <h1 id="form-title" data-i18n="signup.signupBuyer">Sign up as a Buyer</h1>
     <p class="sub" data-i18n="signup.createAccount">Create your account</p>
@@ -306,8 +435,16 @@ main {
     return data;
   }
 
+  var ALL_STATES = [
+    "state-role",
+    "state-method",
+    "state-telegram-form",
+    "state-telegram-wait",
+    "state-form",
+  ];
+
   function showState(id) {
-    ["state-role", "state-form"].forEach(function (s) {
+    ALL_STATES.forEach(function (s) {
       $(("#" + s)).classList.toggle("is-hidden", s !== id);
     });
   }
@@ -332,18 +469,34 @@ main {
       var newText = role === "buyer" ? "Sign up as a Buyer" : "Sign up as a Seller";
       $("#form-title").innerHTML = newText;
 
-      // Show form
-      showState("state-form");
+      // Show method selection (email vs Telegram)
+      showState("state-method");
     });
   });
 
-  // Back button
-  $("#back-btn").addEventListener("click", function () {
+  $("#method-back-btn").addEventListener("click", function () {
     selectedRole = null;
     document.querySelectorAll(".role-btn").forEach(function (b) {
       b.classList.remove("active");
     });
     showState("state-role");
+  });
+
+  $("#method-email").addEventListener("click", function () {
+    showState("state-form");
+  });
+
+  $("#method-telegram").addEventListener("click", function () {
+    showState("state-telegram-form");
+  });
+
+  // Back button (from the email form)
+  $("#back-btn").addEventListener("click", function () {
+    showState("state-method");
+  });
+
+  $("#telegram-form-back-btn").addEventListener("click", function () {
+    showState("state-method");
   });
 
   // Signup form
@@ -396,6 +549,112 @@ main {
     }
   });
 
+  /* Telegram signup */
+  var TELEGRAM_POLL_MS = 1500;
+  var TELEGRAM_MAX_WAIT_MS = 5 * 60 * 1000;
+  var telegramPollTimer = null;
+  var telegramPollDeadline = null;
+
+  function stopTelegramPoll() {
+    if (telegramPollTimer) {
+      clearInterval(telegramPollTimer);
+      telegramPollTimer = null;
+    }
+  }
+
+  $("#telegram-wait-back-btn").addEventListener("click", function () {
+    stopTelegramPoll();
+    showState("state-telegram-form");
+  });
+
+  var telegramForm = $("#telegram-form");
+  var telegramSubmit = $("#telegram-form-submit");
+  var telegramFormError = $("#telegram-form-error");
+  var telegramWaitStatus = $("#telegram-wait-status");
+  var telegramWaitError = $("#telegram-wait-error");
+  var telegramDeepLink = $("#telegram-deep-link");
+
+  telegramForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    telegramFormError.textContent = "";
+
+    if (!selectedRole) {
+      telegramFormError.textContent = "Please select a role";
+      return;
+    }
+
+    var company = $("#tg-company").value;
+    var email = $("#tg-email").value;
+    var city = $("#tg-city").value || undefined;
+    var region = $("#tg-region").value || undefined;
+
+    telegramSubmit.disabled = true;
+    try {
+      var res = await api("/telegram/start", {
+        method: "POST",
+        body: JSON.stringify({
+          intent: "signup",
+          role: selectedRole,
+          company_name: company,
+          email: email,
+          city: city,
+          region: region
+        })
+      });
+
+      telegramDeepLink.href = res.deep_link;
+      telegramWaitError.textContent = "";
+      telegramWaitStatus.textContent = t("signup.telegram.waitingStart");
+      showState("state-telegram-wait");
+      startTelegramPoll(res.token);
+    } catch (err) {
+      telegramFormError.textContent = err.message || t("signup.error");
+    } finally {
+      telegramSubmit.disabled = false;
+    }
+  });
+
+  function startTelegramPoll(token) {
+    stopTelegramPoll();
+    telegramPollDeadline = Date.now() + TELEGRAM_MAX_WAIT_MS;
+
+    telegramPollTimer = setInterval(async function () {
+      if (Date.now() > telegramPollDeadline) {
+        stopTelegramPoll();
+        telegramWaitError.textContent = t("signup.telegram.timedOut");
+        return;
+      }
+
+      var status;
+      try {
+        status = await api("/telegram/status?token=" + encodeURIComponent(token));
+      } catch (err) {
+        // Transient network hiccup — keep polling until the deadline.
+        return;
+      }
+
+      if (status.status === "awaiting_start") {
+        telegramWaitStatus.textContent = t("signup.telegram.waitingStart");
+      } else if (status.status === "awaiting_contact") {
+        telegramWaitStatus.textContent = t("signup.telegram.waitingContact");
+      } else if (status.status === "completed" || status.status === "consumed") {
+        stopTelegramPoll();
+        window.location.href = "/";
+      } else if (status.status === "expired") {
+        stopTelegramPoll();
+        telegramWaitError.textContent = t("signup.telegram.expired");
+      } else if (status.status === "error") {
+        stopTelegramPoll();
+        var detailKey = "signup.telegram.error." + (status.detail || "generic");
+        var msg = t(detailKey);
+        telegramWaitError.textContent = msg === detailKey ? t("signup.telegram.error.generic") : msg;
+      } else if (status.status === "not_found") {
+        stopTelegramPoll();
+        telegramWaitError.textContent = t("signup.telegram.expired");
+      }
+    }, TELEGRAM_POLL_MS);
+  }
+
   /* Language toggle */
   var idText = {
     "signup.meta.title": "Mulai - Yardline",
@@ -420,7 +679,33 @@ main {
     "signup.error": "Terjadi kesalahan. Silakan coba lagi.",
     "signup.haveAccount": "Sudah punya akun? <a href=\"/login\" data-i18n=\"signup.login\">Masuk</a>",
     "signup.login": "Masuk",
-    "signup.back": "Kembali"
+    "signup.back": "Kembali",
+    "signup.method.title": "Ingin daftar dengan cara apa?",
+    "signup.method.sub": "Pilih yang paling cocok untuk Anda",
+    "signup.method.emailTitle": "Daftar dengan Email",
+    "signup.method.emailBullet1": "Bisa dari perangkat apa saja, tanpa aplikasi",
+    "signup.method.emailBullet2": "Cocok untuk inbox perusahaan bersama",
+    "signup.method.emailBullet3": "Reset kata sandi standar",
+    "signup.method.telegramTitle": "Daftar dengan Telegram",
+    "signup.method.telegramBullet1": "Tanpa kata sandi untuk dibuat/diingat",
+    "signup.method.telegramBullet2": "Nomor telepon diverifikasi langsung oleh Telegram",
+    "signup.method.telegramBullet3": "Selesai dalam kurang dari semenit",
+    "signup.telegram.title": "Daftar dengan Telegram",
+    "signup.telegram.sub": "Beberapa detail dulu — nomor telepon Anda berasal dari Telegram",
+    "signup.telegram.continue": "Lanjut ke Telegram",
+    "signup.telegram.waitTitle": "Hampir selesai",
+    "signup.telegram.waitSub": "Buka Telegram, ketuk Start, lalu bagikan nomor telepon Anda saat diminta.",
+    "signup.telegram.openButton": "Buka Telegram",
+    "signup.telegram.waitingStart": "Menunggu Anda mengetuk Start di Telegram…",
+    "signup.telegram.waitingContact": "Menunggu Anda membagikan nomor telepon…",
+    "signup.telegram.expired": "Tautan ini kedaluwarsa — silakan coba lagi.",
+    "signup.telegram.timedOut": "Menunggu terlalu lama — silakan coba lagi.",
+    "signup.telegram.error.generic": "Terjadi kesalahan. Silakan coba lagi.",
+    "signup.telegram.error.email_taken": "Sudah ada akun dengan email ini.",
+    "signup.telegram.error.telegram_already_linked": "Akun Telegram ini sudah terhubung ke akun lain.",
+    "signup.telegram.error.not_registered": "Tidak ditemukan akun untuk Telegram ini.",
+    "signup.telegram.error.account_missing": "Terjadi kesalahan. Silakan coba lagi.",
+    "signup.telegram.error.signup_failed": "Pendaftaran gagal. Silakan coba lagi."
   };
 
   var i18nEls = document.querySelectorAll("[data-i18n]");
@@ -428,6 +713,25 @@ main {
   i18nEls.forEach(function (el) {
     var key = el.dataset.i18n;
     enText[key] = el.tagName === "TITLE" ? el.textContent : el.innerHTML;
+  });
+
+  // These keys are only ever referenced dynamically (via t()), never as a
+  // tagged DOM element, so the DOM-scan above never picks them up — without
+  // this, English would silently fall back to the raw key string. (The
+  // first two predate this change — same bug, same fix, found in passing.)
+  Object.assign(enText, {
+    "signup.error": "Something went wrong. Please try again.",
+    "signup.passwordTooShort": "Password must be at least 8 characters",
+    "signup.telegram.waitingStart": "Waiting for you to tap Start in Telegram…",
+    "signup.telegram.waitingContact": "Waiting for you to share your phone number…",
+    "signup.telegram.expired": "This link has expired — please try again.",
+    "signup.telegram.timedOut": "This took too long — please try again.",
+    "signup.telegram.error.generic": "Something went wrong. Please try again.",
+    "signup.telegram.error.email_taken": "An account with this email already exists.",
+    "signup.telegram.error.telegram_already_linked": "This Telegram account is already linked to another account.",
+    "signup.telegram.error.not_registered": "No account found for this Telegram.",
+    "signup.telegram.error.account_missing": "Something went wrong. Please try again.",
+    "signup.telegram.error.signup_failed": "Signup failed. Please try again."
   });
 
   var currentDict = enText;

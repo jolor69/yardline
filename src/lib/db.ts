@@ -1,3 +1,4 @@
+import { NO_PASSWORD_SENTINEL } from "./auth";
 import type {
   Account,
   BuyerCriteria,
@@ -9,6 +10,9 @@ import type {
   PasswordResetToken,
   PublicAccount,
   Session,
+  TelegramIntent,
+  TelegramPendingSignup,
+  TelegramPendingStatus,
 } from "./types";
 
 // Every query here uses .bind() parameterization — never string-interpolate
@@ -21,24 +25,32 @@ export function toPublicAccount(account: Account): PublicAccount {
 
 export async function insertAccount(
   env: Env,
-  input: Pick<Account, "role" | "company_name" | "email" | "password_hash"> &
-    Partial<Pick<Account, "phone" | "city" | "region" | "lat" | "lng">>,
+  input: Pick<Account, "role" | "company_name" | "email"> &
+    Partial<
+      Pick<
+        Account,
+        "phone" | "city" | "region" | "lat" | "lng" | "password_hash" | "telegram_id" | "telegram_username"
+      >
+    >,
 ): Promise<Account> {
   const row = await env.DB.prepare(
-    `INSERT INTO accounts (role, company_name, email, password_hash, phone, city, region, lat, lng)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `INSERT INTO accounts (role, company_name, email, password_hash, phone, city, region, lat, lng, telegram_id, telegram_username)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
      RETURNING *`,
   )
     .bind(
       input.role,
       input.company_name,
       input.email,
-      input.password_hash,
+      // Telegram-only accounts have no password — see NO_PASSWORD_SENTINEL.
+      input.password_hash ?? NO_PASSWORD_SENTINEL,
       input.phone ?? null,
       input.city ?? null,
       input.region ?? null,
       input.lat ?? null,
       input.lng ?? null,
+      input.telegram_id ?? null,
+      input.telegram_username ?? null,
     )
     .first<Account>();
   if (!row) throw new Error("Failed to insert account");
@@ -51,6 +63,15 @@ export async function getAccount(env: Env, id: number): Promise<Account | null> 
 
 export async function getAccountByEmail(env: Env, email: string): Promise<Account | null> {
   return env.DB.prepare("SELECT * FROM accounts WHERE email = ?").bind(email).first<Account>();
+}
+
+export async function getAccountByTelegramId(
+  env: Env,
+  telegramId: number,
+): Promise<Account | null> {
+  return env.DB.prepare("SELECT * FROM accounts WHERE telegram_id = ?")
+    .bind(telegramId)
+    .first<Account>();
 }
 
 export async function listAccounts(env: Env, role?: string): Promise<Account[]> {
@@ -196,6 +217,153 @@ export async function setSetting(env: Env, key: string, value: string): Promise<
   )
     .bind(key, value)
     .run();
+}
+
+// ---------------------------------------------------------------------
+// Telegram pending signups — see src/routes/telegram.ts for the state
+// machine these helpers drive (awaiting_start -> awaiting_contact ->
+// completed -> consumed, with expired/error as terminal off-ramps).
+// ---------------------------------------------------------------------
+
+export interface InsertTelegramPendingSignupInput {
+  token: string;
+  intent: TelegramIntent;
+  role?: "buyer" | "seller" | null;
+  company_name?: string | null;
+  email?: string | null;
+  city?: string | null;
+  region?: string | null;
+  lat?: number | null;
+  lng?: number | null;
+  requester_ip?: string | null;
+  expires_at: string;
+}
+
+export async function insertTelegramPendingSignup(
+  env: Env,
+  input: InsertTelegramPendingSignupInput,
+): Promise<TelegramPendingSignup> {
+  const row = await env.DB.prepare(
+    `INSERT INTO telegram_pending_signups
+       (token, intent, role, company_name, email, city, region, lat, lng, requester_ip, expires_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+     RETURNING *`,
+  )
+    .bind(
+      input.token,
+      input.intent,
+      input.role ?? null,
+      input.company_name ?? null,
+      input.email ?? null,
+      input.city ?? null,
+      input.region ?? null,
+      input.lat ?? null,
+      input.lng ?? null,
+      input.requester_ip ?? null,
+      input.expires_at,
+    )
+    .first<TelegramPendingSignup>();
+  if (!row) throw new Error("Failed to insert telegram pending signup");
+  return row;
+}
+
+export async function getTelegramPendingSignup(
+  env: Env,
+  token: string,
+): Promise<TelegramPendingSignup | null> {
+  return env.DB.prepare("SELECT * FROM telegram_pending_signups WHERE token = ?")
+    .bind(token)
+    .first<TelegramPendingSignup>();
+}
+
+// "Most recent wins" if a user somehow has two awaiting_contact rows for
+// the same chat (e.g. opened the deep link twice) — see plan for why this
+// edge case isn't worth enforcing at the DB layer.
+export async function getPendingSignupByChatIdAwaitingContact(
+  env: Env,
+  chatId: number,
+): Promise<TelegramPendingSignup | null> {
+  return env.DB.prepare(
+    `SELECT * FROM telegram_pending_signups
+     WHERE chat_id = ? AND status = 'awaiting_contact'
+     ORDER BY created_at DESC LIMIT 1`,
+  )
+    .bind(chatId)
+    .first<TelegramPendingSignup>();
+}
+
+export async function markPendingSignupAwaitingContact(
+  env: Env,
+  token: string,
+  fields: { chat_id: number; telegram_user_id: number; telegram_username: string | null },
+): Promise<void> {
+  await env.DB.prepare(
+    `UPDATE telegram_pending_signups
+     SET chat_id = ?, telegram_user_id = ?, telegram_username = ?, status = 'awaiting_contact'
+     WHERE token = ?`,
+  )
+    .bind(fields.chat_id, fields.telegram_user_id, fields.telegram_username, token)
+    .run();
+}
+
+export async function linkPendingSignupToChat(
+  env: Env,
+  token: string,
+  fields: { chat_id: number; telegram_user_id: number; telegram_username: string | null },
+): Promise<void> {
+  await env.DB.prepare(
+    `UPDATE telegram_pending_signups
+     SET chat_id = ?, telegram_user_id = ?, telegram_username = ?
+     WHERE token = ?`,
+  )
+    .bind(fields.chat_id, fields.telegram_user_id, fields.telegram_username, token)
+    .run();
+}
+
+export async function completePendingSignup(
+  env: Env,
+  token: string,
+  accountId: number,
+  detail: string | null = null,
+): Promise<void> {
+  await env.DB.prepare(
+    `UPDATE telegram_pending_signups SET status = 'completed', account_id = ?, detail = ? WHERE token = ?`,
+  )
+    .bind(accountId, detail, token)
+    .run();
+}
+
+export async function failPendingSignup(env: Env, token: string, detail: string): Promise<void> {
+  await env.DB.prepare(
+    `UPDATE telegram_pending_signups SET status = 'error', detail = ? WHERE token = ?`,
+  )
+    .bind(detail, token)
+    .run();
+}
+
+export async function expirePendingSignup(env: Env, token: string): Promise<void> {
+  await env.DB.prepare(`UPDATE telegram_pending_signups SET status = 'expired' WHERE token = ?`)
+    .bind(token)
+    .run();
+}
+
+export async function consumePendingSignup(env: Env, token: string): Promise<void> {
+  await env.DB.prepare(`UPDATE telegram_pending_signups SET status = 'consumed' WHERE token = ?`)
+    .bind(token)
+    .run();
+}
+
+export async function countRecentPendingSignupsByIp(
+  env: Env,
+  ip: string,
+  sinceIso: string,
+): Promise<number> {
+  const row = await env.DB.prepare(
+    `SELECT COUNT(*) AS n FROM telegram_pending_signups WHERE requester_ip = ? AND created_at > ?`,
+  )
+    .bind(ip, sinceIso)
+    .first<{ n: number }>();
+  return row?.n ?? 0;
 }
 
 export async function insertDraftListing(

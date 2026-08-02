@@ -4,3 +4,15 @@ OPENROUTER_API_KEY=sk-or-v1-...
 
 # For production, don't put the real key in any file — set it with:
 #   wrangler secret put OPENROUTER_API_KEY
+
+# Telegram-based signup/login — create a bot via @BotFather on Telegram to
+# get the token. Webhook secret is any random string you generate yourself
+# (e.g. `openssl rand -hex 32`) and also pass to Telegram's setWebhook call.
+# Telegram can't reach localhost, so local dev can only exercise
+# /api/telegram/webhook by POSTing synthetic Update JSON directly at it —
+# real end-to-end testing needs a deployed URL (or a tunnel) registered via
+# setWebhook. See migrations/0005_telegram_auth.sql and src/routes/telegram.ts.
+TELEGRAM_BOT_TOKEN=123456:ABC-DEF...
+TELEGRAM_WEBHOOK_SECRET=change-me
+# TELEGRAM_BOT_USERNAME is not a secret (it's public in the t.me/<username>
+# URL) so it lives in wrangler.jsonc's "vars" block instead of here.

@@ -51,5 +51,13 @@
     }
   ],
 
+  // Not a secret — it's public in the t.me/<username> URL itself — so a
+  // plain var is fine here. TELEGRAM_BOT_TOKEN and TELEGRAM_WEBHOOK_SECRET
+  // are real secrets, set via `wrangler secret put` (see .dev.vars.example
+  // for local dev). Update this once the bot is created via @BotFather.
+  "vars": {
+    "TELEGRAM_BOT_USERNAME": "YardlineBot"
+  },
+
   "observability": { "enabled": true, "head_sampling_rate": 0.1 }
 }
