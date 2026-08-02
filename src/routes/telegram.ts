@@ -8,7 +8,6 @@ import {
   expirePendingSignup,
   failPendingSignup,
   getAccount,
-  getAccountByEmail,
   getAccountByTelegramId,
   getPendingSignupByChatIdAwaitingContact,
   getTelegramPendingSignup,
@@ -57,12 +56,7 @@ const startSchema = z.discriminatedUnion("intent", [
   z.object({
     intent: z.literal("signup"),
     role: z.enum(["buyer", "seller"]),
-    company_name: z.string().min(1),
-    email: z.string().email(),
-    city: z.string().optional(),
-    region: z.string().optional(),
-    lat: z.number().optional(),
-    lng: z.number().optional(),
+    full_name: z.string().min(1),
   }),
   z.object({ intent: z.literal("login") }),
 ]);
@@ -83,12 +77,10 @@ app.post("/start", async (c) => {
     return c.json({ error: "Too many attempts — please try again later" }, 429);
   }
 
-  if (body.data.intent === "signup") {
-    const existing = await getAccountByEmail(c.env, body.data.email);
-    if (existing) {
-      return c.json({ error: "An account with this email already exists" }, 409);
-    }
-  }
+  // No email collected upfront anymore (see webhook: a placeholder email is
+  // generated at account-creation time instead, since Telegram never
+  // provides one) — so there's no email-uniqueness check to do here.
+  // telegram_id's own UNIQUE constraint is what catches a real duplicate.
 
   const token = randomToken();
   const expires_at = addMinutes(PENDING_TTL_MINUTES);
@@ -97,12 +89,10 @@ app.post("/start", async (c) => {
     token,
     intent: body.data.intent,
     role: body.data.intent === "signup" ? body.data.role : null,
-    company_name: body.data.intent === "signup" ? body.data.company_name : null,
-    email: body.data.intent === "signup" ? body.data.email : null,
-    city: body.data.intent === "signup" ? (body.data.city ?? null) : null,
-    region: body.data.intent === "signup" ? (body.data.region ?? null) : null,
-    lat: body.data.intent === "signup" ? (body.data.lat ?? null) : null,
-    lng: body.data.intent === "signup" ? (body.data.lng ?? null) : null,
+    // Reusing the company_name column as a generic display-name field —
+    // it's shown as a plain name everywhere in the UI (dashboards, admin
+    // table), no company-specific validation depends on it.
+    company_name: body.data.intent === "signup" ? body.data.full_name : null,
     requester_ip: ip,
     expires_at,
   });
@@ -272,14 +262,18 @@ app.post("/webhook", async (c) => {
       const account = await insertAccount(c.env, {
         role: row.role!,
         company_name: row.company_name!,
-        email: row.email!,
+        // Telegram signup no longer collects an email (see the simplified
+        // /start schema above) — accounts.email is still NOT NULL UNIQUE
+        // and used for post-match contact exchange, so a placeholder is
+        // generated here. It's never sent to or displayed prominently;
+        // phone (the real, Telegram-verified contact channel) is already
+        // shown alongside it in contact exchange, so this is cosmetic
+        // plumbing, not a functional gap. Keyed on telegram_id, which is
+        // itself unique, so this can never collide.
+        email: `telegram-${from.id}@yardline.invalid`,
         phone: message.contact.phone_number,
         telegram_id: from.id,
         telegram_username: from.username ?? null,
-        city: row.city,
-        region: row.region,
-        lat: row.lat,
-        lng: row.lng,
       });
       await completePendingSignup(c.env, row.token, account.id);
       newAccountId = account.id;

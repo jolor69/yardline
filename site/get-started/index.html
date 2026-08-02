@@ -321,28 +321,12 @@ main {
   <!-- Step 3a: Telegram mini-form (company + email only, no password) -->
   <div class="signup-card is-hidden" id="state-telegram-form">
     <h1 data-i18n="signup.telegram.title">Sign up with Telegram</h1>
-    <p class="sub" data-i18n="signup.telegram.sub">Just a couple of details first — your phone number comes from Telegram</p>
+    <p class="sub" data-i18n="signup.telegram.sub">Just your name — your phone number comes from Telegram</p>
 
     <form id="telegram-form">
       <div class="field">
-        <label for="tg-company" data-i18n="signup.company">Company Name</label>
-        <input class="input" id="tg-company" type="text" required />
-      </div>
-
-      <div class="field">
-        <label for="tg-email" data-i18n="signup.email">Email</label>
-        <input class="input" id="tg-email" type="email" required />
-      </div>
-
-      <div class="field-row">
-        <div class="field">
-          <label for="tg-city" data-i18n="signup.city">City</label>
-          <input class="input" id="tg-city" type="text" />
-        </div>
-        <div class="field">
-          <label for="tg-region" data-i18n="signup.region">Region</label>
-          <input class="input" id="tg-region" type="text" />
-        </div>
+        <label for="tg-fullname" data-i18n="signup.telegram.fullName">Full Name</label>
+        <input class="input" id="tg-fullname" type="text" required />
       </div>
 
       <p class="error-text" id="telegram-form-error"></p>
@@ -583,10 +567,7 @@ main {
       return;
     }
 
-    var company = $("#tg-company").value;
-    var email = $("#tg-email").value;
-    var city = $("#tg-city").value || undefined;
-    var region = $("#tg-region").value || undefined;
+    var fullName = $("#tg-fullname").value;
 
     telegramSubmit.disabled = true;
     try {
@@ -595,10 +576,7 @@ main {
         body: JSON.stringify({
           intent: "signup",
           role: selectedRole,
-          company_name: company,
-          email: email,
-          city: city,
-          region: region
+          full_name: fullName
         })
       });
 
@@ -691,7 +669,8 @@ main {
     "signup.method.telegramBullet2": "Nomor telepon diverifikasi langsung oleh Telegram",
     "signup.method.telegramBullet3": "Selesai dalam kurang dari semenit",
     "signup.telegram.title": "Daftar dengan Telegram",
-    "signup.telegram.sub": "Beberapa detail dulu — nomor telepon Anda berasal dari Telegram",
+    "signup.telegram.sub": "Cukup nama Anda — nomor telepon Anda berasal dari Telegram",
+    "signup.telegram.fullName": "Nama Lengkap",
     "signup.telegram.continue": "Lanjut ke Telegram",
     "signup.telegram.waitTitle": "Hampir selesai",
     "signup.telegram.waitSub": "Buka Telegram, ketuk Start, lalu bagikan nomor telepon Anda saat diminta.",
