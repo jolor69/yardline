@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requireAuth, requireRole } from "../lib/auth";
 import {
   approveMatch,
+  deactivateAccount,
   getAccount,
   getListing,
   getSetting,
@@ -76,6 +77,23 @@ app.patch("/accounts/:id", async (c) => {
 
   const updated = await updateAccountAdminFields(c.env, id, fields);
   return c.json(toPublicAccount(updated));
+});
+
+// Admin-triggered equivalent of the self-service "unregister" (see
+// migrations/0006 / lib/db.ts's deactivateAccount) — mainly a testing
+// utility: unlinks Telegram (freeing that phone/identity for a fresh
+// signup) and deactivates the account, same as if the user had done it
+// themselves from their own Settings page.
+app.post("/accounts/:id/deactivate", async (c) => {
+  const id = Number(c.req.param("id"));
+  if (!Number.isInteger(id)) return c.json({ error: "Invalid account id" }, 400);
+
+  const existing = await getAccount(c.env, id);
+  if (!existing) return c.json({ error: "Account not found" }, 404);
+
+  await deactivateAccount(c.env, id);
+  const updated = await getAccount(c.env, id);
+  return c.json(toPublicAccount(updated!));
 });
 
 // ---------------------------------------------------------------------

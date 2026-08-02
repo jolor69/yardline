@@ -191,7 +191,7 @@
           <thead>
             <tr>
               <th>Company</th><th>Role</th><th>Email</th><th>Verification</th>
-              <th>Self-list</th><th>Photo limit</th>
+              <th>Self-list</th><th>Photo limit</th><th>Phone / Telegram</th><th>Testing</th>
             </tr>
           </thead>
           <tbody id="accounts-body"></tbody>
@@ -447,6 +447,16 @@
     accounts.forEach((a) => {
       const tr = document.createElement("tr");
       const verifyBadgeClass = a.verification_status === "verified" ? "badge--verified" : "badge--pending";
+      const contactBits = [];
+      if (a.phone) contactBits.push(esc(a.phone));
+      if (a.telegram_username) contactBits.push("@" + esc(a.telegram_username));
+      const contactCell = contactBits.length ? contactBits.join("<br/>") : "—";
+      const hasLinkedIdentity = Boolean(a.phone || a.telegram_id);
+      const testingCell = a.deactivated_at
+        ? `<span class="badge">deactivated</span>`
+        : hasLinkedIdentity
+          ? `<button class="btn btn--outline btn--sm" data-action="reset-identity" data-id="${a.id}" data-company="${esc(a.company_name)}">Reset</button>`
+          : "—";
       tr.innerHTML = `
         <td>${esc(a.company_name)}</td>
         <td><span class="badge">${esc(a.role)}</span></td>
@@ -456,6 +466,8 @@
             </button></td>
         <td>${a.role === "seller" ? `<label class="toggle"><input type="checkbox" data-action="self-list" data-id="${a.id}" ${a.can_self_list ? "checked" : ""}/> allowed</label>` : "—"}</td>
         <td>${a.role === "seller" ? `<input class="input override-input" type="number" min="1" placeholder="default" value="${a.max_photos_override == null ? "" : a.max_photos_override}" data-action="photo-override" data-id="${a.id}" />` : "—"}</td>
+        <td>${contactCell}</td>
+        <td>${testingCell}</td>
       `;
       body.appendChild(tr);
     });
@@ -464,15 +476,37 @@
   $("#accounts-role-filter").addEventListener("change", loadAccounts);
 
   $("#accounts-body").addEventListener("click", async (e) => {
-    const btn = e.target.closest("[data-action='verify']");
-    if (!btn) return;
-    const next = btn.dataset.current === "verified" ? "pending" : "verified";
-    try {
-      await api("/admin/accounts/" + btn.dataset.id, { method: "PATCH", body: JSON.stringify({ verification_status: next }) });
-      toast("Verification updated");
-      loadAccounts();
-    } catch (err) {
-      toast(err.message, true);
+    const verifyBtn = e.target.closest("[data-action='verify']");
+    if (verifyBtn) {
+      const next = verifyBtn.dataset.current === "verified" ? "pending" : "verified";
+      try {
+        await api("/admin/accounts/" + verifyBtn.dataset.id, { method: "PATCH", body: JSON.stringify({ verification_status: next }) });
+        toast("Verification updated");
+        loadAccounts();
+      } catch (err) {
+        toast(err.message, true);
+      }
+      return;
+    }
+
+    const resetBtn = e.target.closest("[data-action='reset-identity']");
+    if (resetBtn) {
+      const ok = confirm(
+        "Reset " + resetBtn.dataset.company + "'s phone/Telegram? This deactivates the account " +
+        "(logs it out everywhere, hides its listings) and frees its phone number/Telegram identity " +
+        "for a fresh signup. Mainly a testing utility — not reversible from this panel."
+      );
+      if (!ok) return;
+      resetBtn.disabled = true;
+      try {
+        await api("/admin/accounts/" + resetBtn.dataset.id + "/deactivate", { method: "POST" });
+        toast("Account deactivated, identity freed");
+        loadAccounts();
+      } catch (err) {
+        toast(err.message, true);
+        resetBtn.disabled = false;
+      }
+      return;
     }
   });
 
