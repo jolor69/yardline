@@ -4,9 +4,20 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-07-27",
 
+  // Pinned explicitly: a second, unrelated Cloudflare account
+  // (joe.lord.ai@gmail.com) also happens to have a Worker named "yardline"
+  // (orphaned, workers.dev only, no custom domain/bindings). Without this,
+  // `wrangler deploy` can resolve to the wrong account and fail auth, or
+  // worse, deploy to the wrong one. This ID is ai.neulab.inc@gmail.com's
+  // account — the one that owns yardline.neulab.xyz, the D1 DB, and R2.
+  "account_id": "0e2ee5dc3ed565a92c679f44963f12a8",
+
   "assets": {
     "directory": "./site",
-    "binding": "ASSETS"
+    "binding": "ASSETS",
+    "run_worker_first": [
+      "/", "/get-started", "/login", "/buyer", "/seller", "/reset-password"
+    ]
   },
 
   // workers_dev must stay explicit — Wrangler silently disables it the
@@ -23,7 +34,12 @@
     {
       "binding": "DB",
       "database_name": "yardline-db",
-      "database_id": "a9c3e832-a2a3-4608-ac03-0d47b8d5b6e0",
+      // Verified live against `wrangler d1 list` under account_id above
+      // (2026-08-02): this is the real yardline-db uuid. A prior commit
+      // (fe9cb5f) swapped this to a9c3e832-..., which does not exist in
+      // this account — that "fix" was made under account confusion (see
+      // the account_id comment above) and broke a working binding.
+      "database_id": "abd55551-dc06-448c-9441-da89f05b9d11",
       "migrations_dir": "migrations"
     }
   ],

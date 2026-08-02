@@ -47,6 +47,26 @@ api.route("/admin", admin);
 
 app.route("/api", api);
 
+// Default language by visitor geography: these pages have client-side EN/ID
+// i18n that falls back to English unless localStorage says otherwise. We hint
+// the client via a cookie (rather than rendering server-side) so the assets
+// layer still serves the plain HTML/CSS/JS unchanged for everything else.
+async function setGeoLangCookie(c: Context<{ Bindings: Env }>) {
+  const cf = c.req.raw.cf as { country?: string } | undefined;
+  const lang = cf?.country === "ID" ? "id" : "en";
+  const res = await c.env.ASSETS.fetch(c.req.raw);
+  const headers = new Headers(res.headers);
+  headers.append(
+    "Set-Cookie",
+    `yardline-geo=${lang}; Path=/; Max-Age=31536000; SameSite=Lax`
+  );
+  return new Response(res.body, { status: res.status, headers });
+}
+
+for (const path of ["/", "/get-started", "/login", "/buyer", "/seller", "/reset-password"]) {
+  app.get(path, setGeoLangCookie);
+}
+
 // Everything that isn't /api/* falls through to the static site (site/).
 // Explicitly guard the /api prefix here too: Hono's .route() mounting does
 // not reliably delegate an unmatched sub-path to the sub-app's notFound —

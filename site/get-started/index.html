@@ -460,9 +460,15 @@ main {
     btn.addEventListener("click", function () { setLang(btn.dataset.langBtn); });
   });
 
+  function getCookie(name) {
+    var m = document.cookie.match(new RegExp("(^|; )" + name + "=([^;]*)"));
+    return m ? decodeURIComponent(m[2]) : null;
+  }
+
   var savedLang = null;
   try { savedLang = localStorage.getItem("yardline-lang"); } catch (e) {}
-  if (savedLang === "id") { setLang("id"); }
+  var geoLang = savedLang === null ? getCookie("yardline-geo") : null;
+  if (savedLang === "id" || geoLang === "id") { setLang("id"); }
 
   // Handle query params for pre-selected role
   var params = new URLSearchParams(location.search);
