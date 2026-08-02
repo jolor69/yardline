@@ -272,9 +272,13 @@ app.post("/webhook", async (c) => {
         // generated here. It's never sent to or displayed prominently;
         // phone (the real, Telegram-verified contact channel) is already
         // shown alongside it in contact exchange, so this is cosmetic
-        // plumbing, not a functional gap. Keyed on telegram_id, which is
-        // itself unique, so this can never collide.
-        email: `telegram-${from.id}@yardline.invalid`,
+        // plumbing, not a functional gap. Includes a random suffix, not
+        // just telegram_id: deactivation frees telegram_id for reuse (see
+        // migrations/0006) but deliberately does NOT change a deactivated
+        // account's email, so a deterministic telegram_id-only email would
+        // collide with that old row on the very next fresh signup by the
+        // same Telegram user — confirmed by testing this exact scenario.
+        email: `telegram-${from.id}-${randomToken().slice(0, 8)}@yardline.invalid`,
         phone: message.contact.phone_number,
         telegram_id: from.id,
         telegram_username: from.username ?? null,

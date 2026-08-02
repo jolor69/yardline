@@ -141,7 +141,8 @@ export async function getSessionAccount(env: Env, token: string): Promise<Accoun
   return env.DB.prepare(
     `SELECT accounts.* FROM sessions
      JOIN accounts ON accounts.id = sessions.account_id
-     WHERE sessions.id = ? AND sessions.expires_at > datetime('now')`,
+     WHERE sessions.id = ? AND sessions.expires_at > datetime('now')
+       AND accounts.deactivated_at IS NULL`,
   )
     .bind(token)
     .first<Account>();
@@ -197,6 +198,24 @@ export async function updateAccountPassword(
   await env.DB.prepare(`UPDATE accounts SET password_hash = ? WHERE id = ?`)
     .bind(passwordHash, accountId)
     .run();
+}
+
+// Self-service "unregister" — deactivates the account, unlinks Telegram
+// (clearing telegram_id frees that identity for a future fresh signup,
+// since SQLite's UNIQUE index treats every NULL as distinct), hides any
+// live listings/criteria from other users, and logs out everywhere.
+// Deliberately does NOT touch listings/matches/messages rows themselves —
+// only account_id-scoped `active` flags — so history is preserved.
+// Batched for atomicity across the 4 affected tables in one round trip.
+export async function deactivateAccount(env: Env, accountId: number): Promise<void> {
+  await env.DB.batch([
+    env.DB.prepare(
+      `UPDATE accounts SET deactivated_at = datetime('now'), telegram_id = NULL, telegram_username = NULL WHERE id = ?`,
+    ).bind(accountId),
+    env.DB.prepare(`UPDATE listings SET active = 0 WHERE account_id = ?`).bind(accountId),
+    env.DB.prepare(`UPDATE buyer_criteria SET active = 0 WHERE account_id = ?`).bind(accountId),
+    env.DB.prepare(`DELETE FROM sessions WHERE account_id = ?`).bind(accountId),
+  ]);
 }
 
 // ---------------------------------------------------------------------

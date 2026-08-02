@@ -108,10 +108,14 @@ export async function createSession(env: Env, c: Context, accountId: number): Pr
   });
 }
 
+export function clearSessionCookie(c: Context): void {
+  deleteCookie(c, SESSION_COOKIE, { path: "/" });
+}
+
 export async function destroySession(env: Env, c: Context): Promise<void> {
   const token = getCookie(c, SESSION_COOKIE);
   if (token) await deleteSession(env, token);
-  deleteCookie(c, SESSION_COOKIE, { path: "/" });
+  clearSessionCookie(c);
 }
 
 async function resolveAccount(env: Env, c: Context): Promise<Account | null> {

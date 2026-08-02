@@ -32,6 +32,7 @@
       <button class="tab" role="tab" data-tab="guide" aria-selected="false" aria-controls="panel-guide" data-i18n="buyer.nav.guide">Guide</button>
       <button class="tab" role="tab" data-tab="listings" aria-selected="true" aria-controls="panel-listings" data-i18n="buyer.nav.listings">Listings</button>
       <button class="tab" role="tab" data-tab="messages" aria-selected="false" aria-controls="panel-messages" data-i18n="buyer.nav.messages">Messages</button>
+      <button class="tab" role="tab" data-tab="settings" aria-selected="false" aria-controls="panel-settings" data-i18n="buyer.nav.settings">Settings</button>
     </div>
   </div>
 
@@ -206,6 +207,48 @@
       </div>
       <p class="empty-state" id="messages-disabled" hidden data-i18n="buyer.messages.disabled">Messaging is currently disabled by the marketplace administrator.</p>
     </div>
+
+    <!-- SETTINGS TAB -->
+    <div class="tab-panel is-hidden" id="panel-settings" role="tabpanel" data-panel="settings" aria-labelledby="tab-settings">
+      <div class="panel-header">
+        <h1 data-i18n="buyer.settings.title">Settings</h1>
+      </div>
+
+      <div class="card">
+        <h2 data-i18n="buyer.settings.account">Account Settings</h2>
+        <div class="field">
+          <label data-i18n="buyer.settings.company">Company Name</label>
+          <p id="settings-company">—</p>
+        </div>
+        <div class="field">
+          <label data-i18n="buyer.settings.email">Email</label>
+          <p id="settings-email">—</p>
+        </div>
+        <div class="field">
+          <label data-i18n="buyer.settings.phone">Phone</label>
+          <p id="settings-phone">—</p>
+        </div>
+        <div class="field">
+          <label data-i18n="buyer.settings.location">Location</label>
+          <p id="settings-location">—</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 data-i18n="buyer.settings.security">Security</h2>
+        <p data-i18n="buyer.settings.passwordHint" style="color: var(--color-muted); font-size: var(--text-sm); margin-bottom: var(--space-md);">Forgot your password?</p>
+        <a href="/reset-password" class="btn btn--outline" data-i18n="buyer.settings.resetPassword">Reset Password</a>
+      </div>
+
+      <div class="card card--danger">
+        <h2 data-i18n="buyer.settings.dangerZone">Danger Zone</h2>
+        <p data-i18n="buyer.settings.logoutDesc" style="color: var(--color-muted); font-size: var(--text-sm); margin-bottom: var(--space-md);">Log out from your account.</p>
+        <button class="btn btn--outline" id="settings-logout-btn" data-i18n="buyer.settings.logout">Log Out</button>
+
+        <p data-i18n="buyer.settings.deleteDesc" style="color: var(--color-muted); font-size: var(--text-sm); margin: var(--space-lg) 0 var(--space-md);">Deactivate your account. You'll be logged out and disconnected from Telegram. This does not delete your match or message history.</p>
+        <button class="btn btn--outline" id="settings-delete-btn" data-i18n="buyer.settings.delete">Delete My Account</button>
+      </div>
+    </div>
   </main>
 </div>
 
@@ -365,12 +408,25 @@
       return;
     }
 
-    if (e.target.id === "logout-btn") {
+    if (e.target.id === "logout-btn" || e.target.id === "settings-logout-btn") {
       try {
         await api("/auth/logout", { method: "POST" });
         window.location.href = "/login";
       } catch (err) {
         toast(err.message || "Logout failed", "error");
+      }
+      return;
+    }
+
+    if (e.target.id === "settings-delete-btn") {
+      if (!confirm(t("buyer.settings.deleteConfirm"))) return;
+      e.target.disabled = true;
+      try {
+        await api("/auth/deactivate", { method: "POST" });
+        window.location.href = "/login";
+      } catch (err) {
+        toast(err.message || "Failed to delete account", "error");
+        e.target.disabled = false;
       }
       return;
     }
@@ -439,7 +495,23 @@
     "buyer.messages.noMessages": "Belum ada pesan — sapa dulu.",
     "buyer.messages.send": "Kirim",
     "buyer.messages.disabled": "Pesan saat ini dinonaktifkan oleh admin pasar.",
-    "buyer.messages.placeholder": "Tulis pesan..."
+    "buyer.messages.placeholder": "Tulis pesan...",
+    "buyer.nav.settings": "Pengaturan",
+    "buyer.settings.title": "Pengaturan",
+    "buyer.settings.account": "Pengaturan Akun",
+    "buyer.settings.company": "Nama Perusahaan",
+    "buyer.settings.email": "Email",
+    "buyer.settings.phone": "Telepon",
+    "buyer.settings.location": "Lokasi",
+    "buyer.settings.security": "Keamanan",
+    "buyer.settings.passwordHint": "Lupa kata sandi Anda?",
+    "buyer.settings.resetPassword": "Atur Ulang Kata Sandi",
+    "buyer.settings.dangerZone": "Zona Bahaya",
+    "buyer.settings.logoutDesc": "Keluar dari akun Anda.",
+    "buyer.settings.logout": "Keluar",
+    "buyer.settings.deleteDesc": "Nonaktifkan akun Anda. Anda akan keluar serta terputus dari Telegram. Ini tidak menghapus riwayat pencocokan atau pesan Anda.",
+    "buyer.settings.delete": "Hapus Akun Saya",
+    "buyer.settings.deleteConfirm": "Nonaktifkan akun Anda? Ini akan mengeluarkan Anda dan memutuskan Telegram dari Yardline. Untuk sepenuhnya berhenti menggunakan bot Yardline, Anda juga perlu memblokir/menghentikannya sendiri di Telegram."
   };
 
   const i18nEls = $$("[data-i18n]");
@@ -448,6 +520,14 @@
     const key = el.dataset.i18n;
     enText[key] = el.tagName === "TITLE" ? el.textContent : el.innerHTML;
   });
+
+  // Dynamic-only key (never tagged on a DOM element, only read via t()
+  // inside confirm()) — without this, English would fall back to the raw
+  // key string.
+  Object.assign(enText, {
+    "buyer.settings.deleteConfirm": "Deactivate your account? This will log you out and disconnect Telegram from Yardline. To fully stop using the Yardline bot, you'll also need to block/stop it yourself in Telegram.",
+  });
+
   const i18nPlaceholderEls = $$("[data-i18n-placeholder]");
   const enPlaceholders = {};
   i18nPlaceholderEls.forEach(el => {
@@ -521,6 +601,10 @@
       return;
     }
     $("#user-name").textContent = me.company_name;
+    $("#settings-company").textContent = me.company_name;
+    $("#settings-email").textContent = me.email;
+    $("#settings-phone").textContent = me.phone || "—";
+    $("#settings-location").textContent = me.city && me.region ? `${me.city}, ${me.region}` : "—";
     showTab("listings");
     await Promise.all([loadListings(), loadConversations()]);
   }

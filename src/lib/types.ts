@@ -40,6 +40,7 @@ export interface Account {
   lng: number | null;
   telegram_id: number | null;
   telegram_username: string | null;
+  deactivated_at: string | null;
   created_at: string;
 }
 

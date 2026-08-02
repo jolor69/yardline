@@ -402,6 +402,9 @@
         <h2 data-i18n="seller.settings.dangerZone">Danger Zone</h2>
         <p data-i18n="seller.settings.logoutDesc" style="color: var(--color-muted); font-size: var(--text-sm); margin-bottom: var(--space-md);">Log out from your account.</p>
         <button class="btn btn--outline" id="settings-logout-btn" data-i18n="seller.settings.logout">Log Out</button>
+
+        <p data-i18n="seller.settings.deleteDesc" style="color: var(--color-muted); font-size: var(--text-sm); margin: var(--space-lg) 0 var(--space-md);">Deactivate your account. Your listings will be hidden and you'll be logged out and disconnected from Telegram. This does not delete your listing or match history.</p>
+        <button class="btn btn--outline" id="settings-delete-btn" data-i18n="seller.settings.delete">Delete My Account</button>
       </div>
     </div>
   </main>
@@ -815,6 +818,19 @@
       return;
     }
 
+    if (e.target.id === "settings-delete-btn") {
+      if (!confirm(t("seller.settings.deleteConfirm"))) return;
+      e.target.disabled = true;
+      try {
+        await api("/auth/deactivate", { method: "POST" });
+        window.location.href = "/login";
+      } catch (err) {
+        toast(err.message || "Failed to delete account", "error");
+        e.target.disabled = false;
+      }
+      return;
+    }
+
     if (e.target.id === "create-listing-btn" || e.target.id === "new-listing-btn") {
       $("#create-listing-modal").classList.remove("is-hidden");
       placeholderIndex = (placeholderIndex + 1) % placeholderSamples.en.length;
@@ -1083,6 +1099,9 @@
     "seller.settings.dangerZone": "Zona Bahaya",
     "seller.settings.logoutDesc": "Keluar dari akun Anda.",
     "seller.settings.logout": "Keluar",
+    "seller.settings.deleteDesc": "Nonaktifkan akun Anda. Listing Anda akan disembunyikan dan Anda akan keluar serta terputus dari Telegram. Ini tidak menghapus riwayat listing atau pencocokan Anda.",
+    "seller.settings.delete": "Hapus Akun Saya",
+    "seller.settings.deleteConfirm": "Nonaktifkan akun Anda? Ini akan mengeluarkan Anda dan memutuskan Telegram dari Yardline. Untuk sepenuhnya berhenti menggunakan bot Yardline, Anda juga perlu memblokir/menghentikannya sendiri di Telegram.",
     "seller.common.cancel": "Batal",
     "seller.common.submit": "Kirim",
     "seller.common.view": "Lihat",
@@ -1121,6 +1140,7 @@
   Object.assign(enText, {
     "seller.common.contact": "Contact",
     "seller.common.delete": "Delete",
+    "seller.settings.deleteConfirm": "Deactivate your account? This will log you out and disconnect Telegram from Yardline. To fully stop using the Yardline bot, you'll also need to block/stop it yourself in Telegram.",
     "seller.error.createFailed": "Failed to create listing",
     "seller.error.loadFailed": "Failed to load data",
     "seller.listings.created": "Listing created successfully!",

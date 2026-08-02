@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { z } from "zod";
 import {
+  clearSessionCookie,
   createSession,
   destroySession,
   hashPassword,
@@ -10,6 +11,7 @@ import {
   verifyPassword,
 } from "../lib/auth";
 import {
+  deactivateAccount,
   deleteSessionsForAccount,
   getAccountByEmail,
   getValidResetToken,
@@ -72,6 +74,11 @@ app.post("/login", async (c) => {
   if (!account || !ok) {
     return c.json({ error: "Incorrect email or password" }, 401);
   }
+  if (account.deactivated_at) {
+    // Same generic-error shape as a wrong password — don't reveal that
+    // this specific email once had an account.
+    return c.json({ error: "Incorrect email or password" }, 401);
+  }
 
   await createSession(c.env, c, account.id);
   return c.json(toPublicAccount(account));
@@ -84,6 +91,16 @@ app.post("/logout", async (c) => {
 
 app.get("/me", requireAuth, async (c) => {
   return c.json(toPublicAccount(c.get("account")));
+});
+
+// Self-service "unregister" — see plan/migrations/0006 for the full design.
+// Deactivates the account, unlinks Telegram, hides live listings/criteria,
+// and logs out everywhere (not just this session).
+app.post("/deactivate", requireAuth, async (c) => {
+  const account = c.get("account");
+  await deactivateAccount(c.env, account.id);
+  clearSessionCookie(c);
+  return c.json({ ok: true });
 });
 
 const forgotSchema = z.object({ email: z.string().email() });
